@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"C:\\\\source\\\\Agenteck\")",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(npm run build:main:*)",
+      "Bash(npm run dev:renderer:*)",
+      "Bash(if [ -d \"node_modules\" ])",
+      "Bash(then echo \"node_modules EXISTS\")",
+      "Bash(else echo \"node_modules MISSING\")",
+      "Bash(fi)",
+      "Bash(if [ -d \"dist\" ])",
+      "Bash(then echo \"dist EXISTS\")",
+      "Bash(else echo \"dist MISSING\")",
+      "Bash(npm install:*)",
+      "Bash(then echo \"node_modules installed successfully\")",
+      "Bash(else echo \"node_modules still missing\")",
+      "Bash(npm:*)",
+      "Bash(node --version:*)",
+      "Bash(/c/Program Files/nodejs/npm.cmd install)",
+      "Bash(gh auth:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-background);
+}
+
+.app-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.main-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* react-mosaic-component overrides */
+.mosaic {
+  background: var(--color-background) !important;
+}
+
+.mosaic-root {
+  margin: 0 !important;
+}
+
+.mosaic-tile {
+  margin: 2px !important;
+}
+
+.mosaic-window {
+  border-radius: var(--radius-md) !important;
+  overflow: hidden !important;
+}
+
+.mosaic-window,
+.mosaic-preview {
+  box-shadow: none !important;
+}
+
+.mosaic-window-toolbar {
+  display: none !important;
+}
+
+.mosaic-window-body {
+  background: var(--color-surface) !important;
+}
+
+.mosaic-split {
+  background: transparent !important;
+}
+
+.mosaic-split:hover {
+  background: var(--color-primary) !important;
+}
+
+.mosaic-split.-row {
+  margin: 0 -2px !important;
+  width: 4px !important;
+}
+
+.mosaic-split.-column {
+  margin: -2px 0 !important;
+  height: 4px !important;
+}
+
+/* Drop target styling */
+.mosaic-drop-target {
+  background: transparent !important;
+}
+
+.drop-target-container .drop-target {
+  background: var(--color-primary) !important;
+  opacity: 0.3 !important;
+  border: 2px dashed var(--color-primary) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.drop-target-container .drop-target-hover {
+  opacity: 0.5 !important;
+}

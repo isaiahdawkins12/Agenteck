@@ -1,0 +1,116 @@
+.terminal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.terminal-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.terminal-list-header h3 {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-textMuted);
+  margin: 0;
+}
+
+.terminal-count-badge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-textSecondary);
+  background-color: var(--color-background);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+.terminal-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.terminal-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  text-align: left;
+}
+
+.terminal-list-item:hover {
+  background-color: var(--color-surfaceHover);
+}
+
+.terminal-list-item.active {
+  background-color: var(--color-surfaceHover);
+  border-left: 2px solid var(--color-primary);
+}
+
+.terminal-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.terminal-list-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.terminal-list-title {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.terminal-list-cwd {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-textMuted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.terminal-list-close {
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--color-textMuted);
+  opacity: 0;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.terminal-list-item:hover .terminal-list-close {
+  opacity: 1;
+}
+
+.terminal-list-close:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.terminal-list-empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--color-textMuted);
+  font-size: var(--font-size-sm);
+}
+
+.terminal-list-empty p {
+  margin: 0;
+}
