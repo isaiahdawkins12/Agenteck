@@ -22,10 +22,13 @@
 /* react-mosaic-component overrides */
 .mosaic {
   background: var(--color-background) !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 .mosaic-root {
   margin: 0 !important;
+  /* Keep library's absolute positioning */
 }
 
 .mosaic-tile {
@@ -35,6 +38,7 @@
 .mosaic-window {
   border-radius: var(--radius-md) !important;
   overflow: hidden !important;
+  position: relative !important;
 }
 
 .mosaic-window,
@@ -48,6 +52,15 @@
 
 .mosaic-window-body {
   background: var(--color-surface) !important;
+  /* Override library's flex layout with absolute positioning.
+     The library uses flex: 1 + height: 0, but this doesn't compute correctly
+     when the toolbar is hidden. Absolute positioning fills the parent reliably. */
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
 }
 
 .mosaic-split {

@@ -43,6 +43,9 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<Terminal | null>(null);
   const fitAddonRef = useRef<FitAddon | null>(null);
+  const lastWrittenIndexRef = useRef<number>(-1);
+  const isInitializedRef = useRef<boolean>(false);
+  const hasInitialFitRef = useRef<boolean>(false);
 
   const { writeToTerminal, resizeTerminal, outputBuffers } = useTerminalStore();
   const { getTerminalTheme } = useThemeStore();
@@ -53,9 +56,10 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
       try {
         fitAddonRef.current.fit();
         const { cols, rows } = terminalRef.current;
+        console.log(`Terminal ${terminalId} resized to ${cols}x${rows}`);
         resizeTerminal(terminalId, { cols, rows });
-      } catch {
-        // Terminal not ready yet
+      } catch (e) {
+        console.error('Terminal resize failed:', e);
       }
     }
   }, [terminalId, resizeTerminal]);
@@ -63,6 +67,13 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Prevent double initialization in React StrictMode
+    if (isInitializedRef.current) return;
+    isInitializedRef.current = true;
+
+    const container = containerRef.current;
+
+    // Create terminal but DON'T call fit() yet - wait for proper dimensions
     const terminal = new Terminal({
       theme: themeToXtermTheme(theme),
       fontFamily: theme.font.family,
@@ -80,32 +91,57 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
     terminal.loadAddon(fitAddon);
     terminal.loadAddon(webLinksAddon);
 
-    terminal.open(containerRef.current);
+    terminal.open(container);
 
     terminalRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
-    // Initial fit
-    setTimeout(() => {
-      handleResize();
-    }, 0);
+    // Use ResizeObserver to detect when container has proper dimensions
+    // This fires AFTER the browser has completed layout calculations
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+
+      const { width, height } = entry.contentRect;
+
+      if (width > 50 && height > 50) {
+        if (!hasInitialFitRef.current) {
+          // Container has proper dimensions - now we can fit for the first time
+          hasInitialFitRef.current = true;
+          console.log(`Terminal ${terminalId} container ready, performing initial fit`);
+          handleResize();
+
+          // Write any buffered output that arrived before terminal was ready
+          const buffer = outputBuffers[terminalId];
+          if (buffer && buffer.length > 0) {
+            console.log(`Writing ${buffer.length} buffered items to terminal ${terminalId}`);
+            for (const item of buffer) {
+              terminal.write(item);
+            }
+            lastWrittenIndexRef.current = buffer.length - 1;
+          }
+        } else {
+          // Already initialized, just handle the resize
+          handleResize();
+        }
+      }
+    });
+
+    resizeObserver.observe(container);
 
     // Handle input
     terminal.onData((data) => {
+      console.log(`Terminal ${terminalId} sending input: ${data.length} chars`);
       writeToTerminal(terminalId, data);
     });
-
-    // Window resize handler
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
-    resizeObserver.observe(containerRef.current);
 
     return () => {
       resizeObserver.disconnect();
       terminal.dispose();
       terminalRef.current = null;
       fitAddonRef.current = null;
+      isInitializedRef.current = false;
+      hasInitialFitRef.current = false;
     };
   }, [terminalId]);
 
@@ -119,12 +155,21 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
     }
   }, [theme]);
 
-  // Handle output
+  // Handle output - write all new buffer items since last write
   useEffect(() => {
     const buffer = outputBuffers[terminalId];
-    if (buffer && buffer.length > 0 && terminalRef.current) {
-      const lastOutput = buffer[buffer.length - 1];
-      terminalRef.current.write(lastOutput);
+    if (buffer && buffer.length > 0) {
+      const newItems = buffer.length - 1 - lastWrittenIndexRef.current;
+      if (newItems > 0) {
+        console.log(`Terminal ${terminalId} has ${newItems} new output items, terminal ready: ${!!terminalRef.current}`);
+      }
+      if (terminalRef.current) {
+        // Write all items from lastWrittenIndex+1 to the end
+        for (let i = lastWrittenIndexRef.current + 1; i < buffer.length; i++) {
+          terminalRef.current.write(buffer[i]);
+        }
+        lastWrittenIndexRef.current = buffer.length - 1;
+      }
     }
   }, [terminalId, outputBuffers]);
 

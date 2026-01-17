@@ -8,7 +8,8 @@ let mainWindow: BrowserWindow | null = null;
 let terminalManager: TerminalManager | null = null;
 let configStore: ConfigStore | null = null;
 
-const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+// Check for explicit dev mode via env var or VITE dev server URL
+const isDev = process.env.NODE_ENV === 'development' || !!process.env.VITE_DEV_SERVER_URL;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -34,10 +35,12 @@ function createWindow(): void {
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
-    mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
+
+  // Open DevTools for debugging
+  mainWindow.webContents.openDevTools();
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);

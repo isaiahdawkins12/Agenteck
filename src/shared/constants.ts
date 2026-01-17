@@ -6,7 +6,9 @@ import type { LayoutPreset } from './types/layout';
 export const APP_NAME = 'Agenteck';
 export const APP_VERSION = '1.0.0';
 
-export const DEFAULT_SHELL: ShellType = process.platform === 'win32' ? 'powershell' : 'bash';
+// Safe check for process.platform (not available in renderer)
+export const DEFAULT_SHELL: ShellType =
+  typeof process !== 'undefined' && process.platform === 'win32' ? 'powershell' : 'bash';
 
 export const SHELL_CONFIGS: Record<string, Partial<ShellInfo>> = {
   powershell: {

@@ -39,8 +39,25 @@ export class TerminalProcess {
   }
 
   private spawn(shellConfig: typeof SHELL_CONFIGS[string], options: TerminalCreateOptions): void {
-    const shell = options.command || shellConfig?.path || this.getDefaultShellPath();
-    const args = options.args || shellConfig?.args || [];
+    let shell: string;
+    let args: string[];
+
+    if (options.command) {
+      // Launching a specific command/agent
+      shell = options.command;
+      args = options.args || [];
+    } else {
+      // Starting a shell
+      shell = shellConfig?.path || this.getDefaultShellPath();
+      args = shellConfig?.args || [];
+    }
+
+    // Ensure shell is not empty
+    if (!shell) {
+      shell = this.getDefaultShellPath();
+    }
+
+    console.log('Spawning terminal:', { shell, args, cwd: this.session.cwd });
 
     const env = {
       ...process.env,
@@ -56,7 +73,8 @@ export class TerminalProcess {
         rows: 24,
         cwd: this.session.cwd,
         env: env as Record<string, string>,
-        useConpty: process.platform === 'win32',
+        // Use WinPTY backend on Windows - ConPTY has issues with Electron
+        useConpty: false,
       });
 
       this.ptyProcess.onData((data: string) => {
@@ -80,8 +98,9 @@ export class TerminalProcess {
       }
     } catch (error) {
       this.session.status = 'error';
-      console.error('Failed to spawn terminal:', error);
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Failed to spawn terminal:', { shell, args, error: errorMessage });
+      throw new Error(`Failed to spawn "${shell}": ${errorMessage}`);
     }
   }
 

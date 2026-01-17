@@ -117,9 +117,11 @@ export const useTerminalStore = create<TerminalStore>((set, get) => ({
   },
 
   initializeListeners: () => {
+    console.log('Initializing terminal IPC listeners');
     const unsubOutput = window.electronAPI.on(
       IPC_CHANNELS.TERMINAL.OUTPUT,
       (data: { id: string; data: string }) => {
+        console.log(`Received output for terminal ${data.id}: ${data.data.length} chars`);
         get().appendOutput(data.id, data.data);
       }
     );
