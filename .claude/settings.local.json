@@ -38,7 +38,8 @@
       "Bash(netstat:*)",
       "Bash(git remote:*)",
       "Bash(dir:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(git merge:*)"
     ]
   }
 }
