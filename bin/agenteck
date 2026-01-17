@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Agenteck - Unix/macOS launcher script
+# Usage: agenteck [start|stop|restart|status|help]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+cd "$PROJECT_DIR"
+
+# Check if dist/cli/cli.js exists
+if [ -f "$PROJECT_DIR/dist/cli/cli.js" ]; then
+    node "$PROJECT_DIR/dist/cli/cli.js" "$@"
+else
+    echo "Agenteck is not built. Building now..."
+    npm run build
+    if [ $? -ne 0 ]; then
+        echo "Build failed. Please run 'npm install' first."
+        exit 1
+    fi
+    node "$PROJECT_DIR/dist/cli/cli.js" "$@"
+fi

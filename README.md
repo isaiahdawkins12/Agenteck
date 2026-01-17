@@ -76,26 +76,103 @@ npm run package:linux  # Linux
 
 ## Usage
 
-### Creating Terminals
+### Command Line Interface
+
+Agenteck includes a CLI for easy launching and management from the terminal.
+
+#### Using npm scripts
+
+```bash
+# Start Agenteck (foreground - waits until closed)
+npm run cli:start
+
+# Stop a running Agenteck instance
+npm run cli:stop
+
+# Check if Agenteck is running
+npm run cli:status
+
+# Show all CLI commands
+npm run cli -- help
+```
+
+#### Using shell scripts directly
+
+```bash
+# Windows
+bin\agenteck.cmd start       # Start in foreground
+bin\agenteck.cmd start -d    # Start in background (detached)
+bin\agenteck.cmd stop        # Stop running instance
+bin\agenteck.cmd status      # Check status
+bin\agenteck.cmd restart     # Restart Agenteck
+
+# macOS/Linux
+./bin/agenteck start         # Start in foreground
+./bin/agenteck start -d      # Start in background
+./bin/agenteck stop          # Stop running instance
+./bin/agenteck status        # Check status
+./bin/agenteck restart       # Restart Agenteck
+```
+
+#### Global installation
+
+After installing globally, you can use the `agenteck` command anywhere:
+
+```bash
+# Install globally
+npm install -g .
+
+# Or link for development
+npm link
+
+# Then use from anywhere
+agenteck start
+agenteck stop
+agenteck status
+```
+
+### Standalone Executable
+
+Create a portable executable that doesn't require Node.js:
+
+```bash
+# Windows portable .exe
+npm run package:portable
+
+# Full installer (NSIS for Windows)
+npm run package:win
+
+# macOS .dmg
+npm run package:mac
+
+# Linux AppImage
+npm run package:linux
+```
+
+Packaged files are output to the `release/` directory.
+
+### GUI Usage
+
+#### Creating Terminals
 
 1. Click the **New** button in the toolbar to create a new terminal
 2. Or click **New Terminal** at the bottom of the sidebar
 3. Or use the keyboard shortcut (to be implemented)
 
-### Launching Agents
+#### Launching Agents
 
 1. Open the **Agents** tab in the sidebar
 2. Click on any agent to launch it in a new terminal
 3. The agent will start with its default configuration
 
-### Managing Layout
+#### Managing Layout
 
 - **Split horizontally**: Click "Split H" or drag a terminal to the side
 - **Split vertically**: Click "Split V" or drag a terminal to the top/bottom
 - **Resize**: Drag the borders between terminals
 - **Presets**: Use the Layouts tab in the sidebar for quick layouts
 
-### Customizing Themes
+#### Customizing Themes
 
 1. Open Settings (gear icon)
 2. Navigate to the Themes tab

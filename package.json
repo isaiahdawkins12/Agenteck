@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "A highly customizable multi-agent terminal orchestrator for managing CLI agents like Claude Code",
   "main": "dist/main/main.js",
+  "bin": {
+    "agenteck": "dist/cli/cli.js"
+  },
   "author": "Agenteck Contributors",
   "license": "MIT",
   "repository": {
@@ -27,15 +30,21 @@
     "build:renderer": "vite build",
     "start": "electron .",
     "preview": "npm run build && electron .",
+    "cli": "node dist/cli/cli.js",
+    "cli:start": "node dist/cli/cli.js start",
+    "cli:stop": "node dist/cli/cli.js stop",
+    "cli:status": "node dist/cli/cli.js status",
     "package": "npm run build && electron-builder",
     "package:win": "npm run build && electron-builder --win",
     "package:mac": "npm run build && electron-builder --mac",
     "package:linux": "npm run build && electron-builder --linux",
+    "package:portable": "npm run build && electron-builder --win portable",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "electron-store": "^8.1.0",
@@ -83,6 +92,13 @@
       "node_modules/**/*",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "bin/",
+        "to": "bin/",
+        "filter": ["**/*"]
+      }
+    ],
     "win": {
       "target": ["nsis", "portable"],
       "icon": "assets/icon.ico"
@@ -99,7 +115,13 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Agenteck"
+    },
+    "portable": {
+      "artifactName": "Agenteck-${version}-portable.exe"
     }
   }
 }
