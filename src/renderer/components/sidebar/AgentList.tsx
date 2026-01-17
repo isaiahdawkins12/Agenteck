@@ -5,7 +5,7 @@ import { AgentSelector } from './AgentSelector';
 import './AgentList.css';
 
 export function AgentList() {
-  const { agents, removeAgent } = useSettingsStore();
+  const { agents, deleteAgent } = useSettingsStore();
   const [showSelector, setShowSelector] = useState(false);
 
   return (
@@ -47,7 +47,7 @@ export function AgentList() {
               key={agent.id}
               agent={agent}
               icon={agent.icon || getDefaultAgentIcon(agent.id)}
-              onRemove={() => removeAgent(agent.id)}
+              onRemove={() => deleteAgent(agent.id)}
             />
           ))
         )}
