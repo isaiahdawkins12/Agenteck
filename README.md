@@ -1,100 +1,71 @@
 # Agenteck
 
-A highly customizable desktop application for managing multiple CLI agents (Claude Code, GitHub Copilot CLI, Aider, Cline, etc.) in a unified interface with drag-and-drop tiling, theming, and full persistence.
+A desktop application for managing multiple CLI AI agents in a unified tiling interface.
+
+<!-- TODO: Screenshot - Main application window showing multiple terminals with different agents -->
+![Agenteck Main Interface](docs/screenshots/main-interface.png)
 
 ## Features
 
-- **Multi-Agent Support**: Launch and manage multiple AI CLI agents simultaneously
-  - Claude Code
-  - GitHub Copilot CLI
-  - Aider
-  - Cline
-  - Continue
-  - Custom agent presets
+**Multi-Agent Support** — Launch Claude Code, GitHub Copilot CLI, Aider, Cline, Continue, or custom agents from a unified sidebar.
 
-- **Flexible Tiling Layout**: Organize your terminals with drag-and-drop tiling
-  - Split horizontally or vertically
-  - Resize tiles by dragging borders
-  - Layout presets (single, split, quad)
-  - Save and restore layouts
+**Tiling Layout** — Drag-and-drop terminals into split views. Resize by dragging borders. Use layout presets for quick arrangements.
 
-- **Beautiful Theming**: Customize the look and feel
-  - Multiple built-in themes (Dracula, Nord, Monokai, Tokyo Night)
-  - Per-terminal theme overrides
-  - Custom theme editor with live preview
-  - Dark mode by default
+<!-- TODO: Screenshot - Tiling layout with 3-4 terminals arranged -->
+![Tiling Layout](docs/screenshots/tiling-layout.png)
 
-- **Modern Terminal Emulation**: Powered by xterm.js
-  - Full ANSI color support
-  - Clickable URLs
-  - Unicode support
-  - Scrollback buffer
+**Theming** — Built-in themes (Dracula, Nord, Monokai, Tokyo Night) with per-terminal overrides and a custom theme editor.
 
-- **Workspace Persistence**: Never lose your setup
-  - Auto-save workspace layout
-  - Restore terminals on startup
-  - Export/import workspaces
+<!-- TODO: Screenshot - Theme selector or theme editor panel -->
+![Theme Selection](docs/screenshots/themes.png)
+
+**Terminal Emulation** — Powered by xterm.js with full ANSI colors, clickable URLs, Unicode, and scrollback.
+
+**Workspace Persistence** — Layouts auto-save and restore on startup.
 
 ## Installation
 
 ### Prerequisites
 
-- Node.js 18 or higher
+- Node.js 18+
 - npm
 
 ### Quick Start
 
 ```bash
-# Clone the repository
 git clone https://github.com/isaiahdawkins12/Agenteck.git
 cd Agenteck
-
-# Install, build, and register the global command
 npm run setup
-
-# Now run from anywhere!
 agenteck start
 ```
 
-That's it! The `agenteck` command is now available system-wide.
+The `agenteck` command is now available globally.
 
-### From Source (Development)
+### Development
 
 ```bash
-# Clone the repository
 git clone https://github.com/isaiahdawkins12/Agenteck.git
 cd Agenteck
-
-# Install dependencies (auto-builds)
 npm install
-
-# Run in development mode
-npm run dev
-
-# In another terminal, start Electron
-npm start
+npm run dev      # Starts Vite dev server + TypeScript watch
+npm start        # In another terminal, starts Electron
 ```
 
-### Building
+### Building & Packaging
 
 ```bash
-# Build for production
-npm run build
-
-# Package for your platform
-npm run package
-
-# Platform-specific packaging
-npm run package:win    # Windows
-npm run package:mac    # macOS
-npm run package:linux  # Linux
+npm run build              # Build for production
+npm run package            # Package for current platform
+npm run package:win        # Windows (NSIS + portable)
+npm run package:mac        # macOS (DMG + ZIP)
+npm run package:linux      # Linux (AppImage + DEB)
 ```
+
+Packaged files output to `release/`.
 
 ## Usage
 
-### Command Line Interface
-
-After running `npm run setup`, the `agenteck` command is available globally:
+### CLI Commands
 
 ```bash
 agenteck start       # Start Agenteck (foreground)
@@ -105,117 +76,64 @@ agenteck restart     # Restart Agenteck
 agenteck help        # Show all commands
 ```
 
-#### Alternative: npm scripts
+Without global install, use `npm run cli:start`, `npm run cli:stop`, etc.
 
-If you prefer not to install globally, use npm scripts from the project directory:
+### GUI
 
-```bash
-npm run cli:start    # Start Agenteck
-npm run cli:stop     # Stop Agenteck
-npm run cli:status   # Check status
-npm run cli -- help  # Show help
-```
+<!-- TODO: Screenshot - Sidebar showing Agents tab with agent list -->
+![Agent Sidebar](docs/screenshots/sidebar-agents.png)
 
-### Standalone Executable
+**Creating Terminals** — Click **+** in the header or use the sidebar.
 
-Create a portable executable that doesn't require Node.js:
+**Launching Agents** — Open the Agents tab in the sidebar and click any agent to launch it in a new terminal.
 
-```bash
-# Windows portable .exe
-npm run package:portable
+**Managing Layout** — Drag terminals to split horizontally/vertically. Drag borders to resize. Use the Layouts tab for presets.
 
-# Full installer (NSIS for Windows)
-npm run package:win
+<!-- TODO: Screenshot - Settings panel showing theme options -->
+![Settings Panel](docs/screenshots/settings.png)
 
-# macOS .dmg
-npm run package:mac
-
-# Linux AppImage
-npm run package:linux
-```
-
-Packaged files are output to the `release/` directory.
-
-### GUI Usage
-
-#### Creating Terminals
-
-1. Click the **New** button in the toolbar to create a new terminal
-2. Or click **New Terminal** at the bottom of the sidebar
-3. Or use the keyboard shortcut (to be implemented)
-
-#### Launching Agents
-
-1. Open the **Agents** tab in the sidebar
-2. Click on any agent to launch it in a new terminal
-3. The agent will start with its default configuration
-
-#### Managing Layout
-
-- **Split horizontally**: Click "Split H" or drag a terminal to the side
-- **Split vertically**: Click "Split V" or drag a terminal to the top/bottom
-- **Resize**: Drag the borders between terminals
-- **Presets**: Use the Layouts tab in the sidebar for quick layouts
-
-#### Customizing Themes
-
-1. Open Settings (gear icon)
-2. Navigate to the Themes tab
-3. Select a built-in theme or create a custom one
-4. Use the theme editor to customize colors
+**Customizing Themes** — Open Settings (gear icon), select a theme, or create a custom one with the theme editor.
 
 ## Architecture
 
 ```
-agenteck/
-├── src/
-│   ├── main/                    # Electron main process
-│   │   ├── main.ts              # Entry point, window management
-│   │   ├── preload.ts           # Context bridge for IPC
-│   │   ├── terminal/            # Terminal process management
-│   │   ├── config/              # Persistence layer
-│   │   └── ipc/                 # IPC handlers
-│   │
-│   ├── renderer/                # React frontend
-│   │   ├── components/          # React components
-│   │   ├── store/               # Zustand state stores
-│   │   ├── hooks/               # Custom React hooks
-│   │   └── styles/              # CSS styles
-│   │
-│   └── shared/                  # Shared types & utilities
-│       ├── types/               # TypeScript interfaces
-│       └── constants.ts         # App constants
+src/
+├── main/           # Electron main process
+│   ├── main.ts     # Entry point, window management
+│   ├── preload.ts  # Context bridge for IPC
+│   ├── terminal/   # PTY process management
+│   ├── config/     # Persistence (electron-store)
+│   └── ipc/        # IPC handlers
+├── renderer/       # React frontend
+│   ├── components/ # UI components
+│   ├── store/      # Zustand stores
+│   ├── hooks/      # Custom hooks
+│   └── styles/     # CSS
+└── shared/         # Shared types & constants
 ```
 
 ## Tech Stack
 
-- **Electron**: Cross-platform desktop framework
-- **React 18**: UI library
-- **TypeScript**: Type-safe JavaScript
-- **Zustand**: Lightweight state management
-- **xterm.js**: Terminal emulation
-- **node-pty**: Pseudo-terminal spawning
-- **react-mosaic-component**: Tiling window manager
-- **electron-store**: Persistent storage
-- **Vite**: Fast build tooling
+| Layer | Technology |
+|-------|------------|
+| Desktop | Electron 34 |
+| UI | React 18 + TypeScript |
+| State | Zustand |
+| Terminal | xterm.js + node-pty |
+| Layout | react-mosaic-component |
+| Build | Vite |
 
 ## Configuration
 
-Configuration is stored in:
-- Windows: `%APPDATA%/agenteck-config/config.json`
-- macOS: `~/Library/Application Support/agenteck-config/config.json`
-- Linux: `~/.config/agenteck-config/config.json`
+Config location:
+- **Windows**: `%APPDATA%/agenteck-config/config.json`
+- **macOS**: `~/Library/Application Support/agenteck-config/config.json`
+- **Linux**: `~/.config/agenteck-config/config.json`
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- [xterm.js](https://xtermjs.org/) for terminal emulation
-- [react-mosaic](https://github.com/nomcopter/react-mosaic) for the tiling layout
-- [Catppuccin](https://github.com/catppuccin/catppuccin) for color inspiration
+[MIT](LICENSE)
