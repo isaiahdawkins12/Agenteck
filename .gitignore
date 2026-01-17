@@ -42,3 +42,4 @@ coverage/
 
 # Markdown files
 *.md
+!AGENTS.md

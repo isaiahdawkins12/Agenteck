@@ -1,0 +1,114 @@
+# AGENTS.md
+
+This file provides context for AI coding assistants working on the Agenteck project.
+
+## Project Overview
+
+Agenteck is a cross-platform Electron desktop application for managing multiple CLI AI agents (Claude Code, GitHub Copilot CLI, Aider, etc.) in a unified tiling interface.
+
+## Tech Stack
+
+- **Electron 34** - Desktop framework
+- **React 18** - UI library
+- **TypeScript** - Strict mode enabled
+- **Zustand** - State management (not Redux)
+- **xterm.js** - Terminal emulation
+- **node-pty** - PTY spawning for terminal processes
+- **react-mosaic-component** - Tiling window layout
+- **Vite** - Build tooling
+- **Vitest** - Testing framework
+
+## Architecture
+
+```
+src/
+├── main/           # Electron main process (Node.js)
+│   ├── main.ts     # Entry point, window management
+│   ├── preload.ts  # Context bridge for IPC
+│   ├── terminal/   # Terminal/PTY process management
+│   ├── config/     # Persistence (electron-store)
+│   └── ipc/        # IPC handlers
+├── renderer/       # React frontend (browser context)
+│   ├── components/ # React components
+│   ├── store/      # Zustand stores
+│   ├── hooks/      # Custom React hooks
+│   └── styles/     # CSS styles
+└── shared/         # Shared between main/renderer
+    ├── types/      # TypeScript interfaces
+    └── constants.ts
+```
+
+**Important**: Main and renderer processes are separate contexts. Use IPC for communication via the preload script.
+
+## Commands
+
+```bash
+npm run dev          # Start dev mode (main + renderer)
+npm run build        # Build for production
+npm start            # Run Electron (after build)
+npm run preview      # Build and run
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix lint errors
+npm run typecheck    # TypeScript check without emit
+npm run test         # Run tests with Vitest
+npm run test:coverage # Tests with coverage
+npm run package      # Package for current platform
+```
+
+## Path Aliases
+
+Use these TypeScript path aliases:
+- `@/*` → `src/*`
+- `@shared/*` → `src/shared/*`
+- `@main/*` → `src/main/*`
+- `@renderer/*` → `src/renderer/*`
+
+## Coding Conventions
+
+### TypeScript
+- Strict mode is enabled - handle null/undefined properly
+- Prefix unused parameters with underscore: `_unusedParam`
+- Avoid `any` - use proper types or `unknown`
+- Define shared types in `src/shared/types/`
+
+### React
+- Use functional components with hooks
+- State management via Zustand stores in `src/renderer/store/`
+- No prop-types (TypeScript handles this)
+- No need to import React for JSX
+
+### ESLint Rules
+- No console.log (use console.warn/error, or remove before commit)
+- Unused variables are errors (prefix with _ if intentional)
+- React hooks rules enforced
+
+### Electron IPC
+- All IPC channels should be typed in `src/shared/types/`
+- Renderer calls main via `window.api.*` (defined in preload)
+- Main process handlers in `src/main/ipc/`
+
+## Git Commits
+
+- **No AI boilerplate**: Do not add "Co-Authored-By: Claude" or similar AI attribution lines to commits
+- Write clear, concise commit messages in imperative mood ("Add feature" not "Added feature")
+- Focus on the "why" not just the "what"
+
+## Testing
+
+- Tests use Vitest
+- Test files: `*.test.ts` or `*.spec.ts`
+- Run specific test: `npm test -- path/to/file.test.ts`
+
+## Platform Considerations
+
+This is a cross-platform app (Windows, macOS, Linux). When working with:
+- File paths: Use `path.join()`, not string concatenation
+- Shell commands: Account for platform differences (cmd.exe vs bash)
+- Line endings: Let git handle via .gitattributes
+
+## Common Gotchas
+
+1. **node-pty is native**: Requires rebuild after Electron version changes
+2. **IPC is async**: All renderer-to-main communication is asynchronous
+3. **xterm.js sizing**: Use the fit addon and handle resize events
+4. **Zustand stores**: Don't mutate state directly, use set() or immer
