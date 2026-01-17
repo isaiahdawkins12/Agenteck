@@ -42,4 +42,6 @@ coverage/
 
 # Markdown files
 *.md
-!AGENTS.md
+!CLAUDE.md
+!README.md
+!CONTRIBUTING.md
