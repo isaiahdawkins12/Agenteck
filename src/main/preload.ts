@@ -26,6 +26,9 @@ const validInvokeChannels: readonly string[] = [
   IPC_CHANNELS.APP.MAXIMIZE,
   IPC_CHANNELS.APP.CLOSE,
   IPC_CHANNELS.APP.IS_MAXIMIZED,
+  // Theme channels
+  IPC_CHANNELS.THEME.EXPORT,
+  IPC_CHANNELS.THEME.IMPORT,
   // Git channels
   GitIpcChannels.DETECT_REPO,
   GitIpcChannels.GET_STATUS,

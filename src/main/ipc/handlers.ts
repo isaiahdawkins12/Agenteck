@@ -2,10 +2,11 @@ import { BrowserWindow, IpcMain, dialog } from 'electron';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
+import * as path from 'path';
 import { TerminalManager } from '../terminal/TerminalManager';
 import { ConfigStore } from '../config/ConfigStore';
 import { IPC_CHANNELS, SHELL_CONFIGS } from '../../shared/constants';
-import type { TerminalCreateOptions, TerminalSize, ShellInfo, Workspace } from '../../shared/types';
+import type { TerminalCreateOptions, TerminalSize, ShellInfo, Workspace, ThemeConfig, TerminalColors } from '../../shared/types';
 
 const execAsync = promisify(exec);
 
@@ -126,6 +127,85 @@ export function registerIpcHandlers(
 
     return result.filePaths[0];
   });
+
+  // Theme handlers
+  ipcMain.handle(IPC_CHANNELS.THEME.EXPORT, async (_event, theme: ThemeConfig) => {
+    const window = getWindow();
+    if (!window) return { success: false, error: 'No window available' };
+
+    const result = await dialog.showSaveDialog(window, {
+      title: 'Export Theme',
+      defaultPath: `${theme.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.json`,
+      filters: [{ name: 'JSON Files', extensions: ['json'] }],
+    });
+
+    if (result.canceled || !result.filePath) {
+      return { success: false, canceled: true };
+    }
+
+    try {
+      const exportData = {
+        name: theme.name,
+        colors: theme.colors,
+        font: theme.font,
+        opacity: theme.opacity,
+      };
+      await fs.promises.writeFile(result.filePath, JSON.stringify(exportData, null, 2), 'utf-8');
+      return { success: true, filePath: result.filePath };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  });
+
+  ipcMain.handle(IPC_CHANNELS.THEME.IMPORT, async () => {
+    const window = getWindow();
+    if (!window) return { success: false, error: 'No window available' };
+
+    const result = await dialog.showOpenDialog(window, {
+      title: 'Import Themes',
+      filters: [{ name: 'JSON Files', extensions: ['json'] }],
+      properties: ['openFile', 'multiSelections'],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return { success: false, canceled: true };
+    }
+
+    const themes: ThemeConfig[] = [];
+    const errors: string[] = [];
+
+    for (const filePath of result.filePaths) {
+      try {
+        const content = await fs.promises.readFile(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        const validation = validateThemeStructure(data);
+
+        if (!validation.valid) {
+          errors.push(`${path.basename(filePath)}: ${validation.error}`);
+          continue;
+        }
+
+        themes.push({
+          id: `imported-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          name: data.name || path.basename(filePath, '.json'),
+          colors: data.colors,
+          font: data.font || {
+            family: '"Cascadia Code", "JetBrains Mono", "Fira Code", Consolas, monospace',
+            size: 14,
+            lineHeight: 1.2,
+          },
+          opacity: data.opacity ?? 1,
+          isBuiltIn: false,
+          category: 'imported',
+          source: path.basename(filePath),
+        });
+      } catch (error) {
+        errors.push(`${path.basename(filePath)}: ${error instanceof Error ? error.message : 'Parse error'}`);
+      }
+    }
+
+    return { success: true, themes, errors };
+  });
 }
 
 async function getAvailableShells(): Promise<ShellInfo[]> {
@@ -160,4 +240,53 @@ async function checkShellAvailable(shellPath: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+const REQUIRED_COLORS: (keyof TerminalColors)[] = [
+  'background',
+  'foreground',
+  'cursor',
+  'black',
+  'red',
+  'green',
+  'yellow',
+  'blue',
+  'magenta',
+  'cyan',
+  'white',
+  'brightBlack',
+  'brightRed',
+  'brightGreen',
+  'brightYellow',
+  'brightBlue',
+  'brightMagenta',
+  'brightCyan',
+  'brightWhite',
+];
+
+function validateThemeStructure(data: unknown): { valid: boolean; error?: string } {
+  if (!data || typeof data !== 'object') {
+    return { valid: false, error: 'Invalid theme structure' };
+  }
+
+  const theme = data as Record<string, unknown>;
+
+  if (!theme.colors || typeof theme.colors !== 'object') {
+    return { valid: false, error: 'Missing or invalid colors object' };
+  }
+
+  const colors = theme.colors as Record<string, unknown>;
+
+  for (const colorKey of REQUIRED_COLORS) {
+    if (typeof colors[colorKey] !== 'string') {
+      return { valid: false, error: `Missing or invalid color: ${colorKey}` };
+    }
+
+    const colorValue = colors[colorKey] as string;
+    if (!/^#[0-9a-fA-F]{6}$/.test(colorValue)) {
+      return { valid: false, error: `Invalid hex color for ${colorKey}: ${colorValue}` };
+    }
+  }
+
+  return { valid: true };
 }

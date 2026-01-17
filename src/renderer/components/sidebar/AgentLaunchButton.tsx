@@ -7,9 +7,10 @@ import './AgentLaunchButton.css';
 interface AgentLaunchButtonProps {
   agent: AgentPreset;
   icon: string;
+  onRemove?: () => void;
 }
 
-export function AgentLaunchButton({ agent, icon }: AgentLaunchButtonProps) {
+export function AgentLaunchButton({ agent, icon, onRemove }: AgentLaunchButtonProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [recentDirectories, setRecentDirectories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -228,6 +229,14 @@ export function AgentLaunchButton({ agent, icon }: AgentLaunchButtonProps) {
                   <path d="M4.5 3l-.5.5v1h6v-1L9.5 3h-5zM3 5v6.5a.5.5 0 00.5.5h7a.5.5 0 00.5-.5V5H3z" />
                 </svg>
                 <span className="dropdown-item-text">Clear default directory</span>
+              </button>
+            )}
+            {onRemove && (
+              <button className="dropdown-item danger-item" onClick={onRemove}>
+                <svg className="dropdown-item-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                  <path d="M6 1.41L4.59 0 0 4.59l1.41 1.41 4.59-4.59zM1.41 6L0 7.41 4.59 12l1.41-1.41-4.59-4.59zM12 1.41L10.59 0 6 4.59l1.41 1.41 4.59-4.59zM7.41 6L6 7.41 10.59 12 12 10.59 7.41 6z" />
+                </svg>
+                <span className="dropdown-item-text">Remove agent</span>
               </button>
             )}
           </div>

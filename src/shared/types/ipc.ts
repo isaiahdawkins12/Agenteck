@@ -1,6 +1,7 @@
 import type { TerminalSession, TerminalCreateOptions, TerminalSize, ShellInfo } from './terminal';
 import type { Workspace } from './workspace';
 import type { Repository, GitStatus, Branch, CreateWorktreeOptions, GitOperationResult } from './git';
+import type { ThemeConfig } from './theme';
 
 export interface IpcChannels {
   // Terminal channels
@@ -41,6 +42,10 @@ export interface IpcChannels {
   'git:create-worktree': (options: CreateWorktreeOptions) => Promise<GitOperationResult>;
   'git:remove-worktree': (repoPath: string, worktreePath: string, force: boolean) => Promise<GitOperationResult>;
   'git:refresh': (repoPath: string) => Promise<Repository | null>;
+
+  // Theme channels
+  'theme:export': (theme: ThemeConfig) => Promise<{ success: boolean; filePath?: string; error?: string; canceled?: boolean }>;
+  'theme:import': () => Promise<{ success: boolean; themes?: ThemeConfig[]; errors?: string[]; canceled?: boolean }>;
 }
 
 export interface IpcEvents {

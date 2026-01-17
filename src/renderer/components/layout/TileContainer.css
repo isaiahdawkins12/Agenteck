@@ -61,3 +61,51 @@
   color: var(--color-textMuted);
   margin: 0;
 }
+
+/* Terminal toolbar styles */
+.terminal-toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.terminal-toolbar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  color: var(--color-textMuted);
+  background-color: transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.terminal-toolbar-button:hover {
+  background-color: var(--color-error);
+  color: var(--color-background);
+}
+
+.terminal-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.drag-handle-icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-textMuted);
+  cursor: grab;
+}
+
+.drag-handle-icon:active {
+  cursor: grabbing;
+}
+
+.terminal-exit-code {
+  font-size: var(--font-size-xs);
+  color: var(--color-textMuted);
+  margin-left: var(--spacing-xs);
+}

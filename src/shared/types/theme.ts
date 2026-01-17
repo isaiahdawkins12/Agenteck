@@ -31,6 +31,8 @@ export interface TerminalFont {
   letterSpacing?: number;
 }
 
+export type ThemeCategory = 'built-in' | 'custom' | 'imported';
+
 export interface ThemeConfig {
   id: string;
   name: string;
@@ -38,6 +40,8 @@ export interface ThemeConfig {
   font: TerminalFont;
   opacity: number;
   isBuiltIn?: boolean;
+  category?: ThemeCategory;
+  source?: string; // filename for imported themes
 }
 
 export interface UITheme {
