@@ -20,7 +20,25 @@
       "Bash(node --version:*)",
       "Bash(/c/Program Files/nodejs/npm.cmd install)",
       "Bash(gh auth:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(then echo \"node_modules exists\")",
+      "Bash(else echo \"node_modules missing\")",
+      "Bash(npx electron-rebuild:*)",
+      "Bash(timeout 10:*)",
+      "Bash(findstr:*)",
+      "Bash(tree:*)",
+      "Bash(git checkout:*)",
+      "Bash(git worktree:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git mv:*)",
+      "Bash(git commit:*)",
+      "Bash(node -e \"\nconst fs = require\\(''fs''\\);\nconst path = ''/c/Users/isaia/AppData/Roaming/agenteck/agenteck-config.json'';\nconst config = JSON.parse\\(fs.readFileSync\\(path, ''utf8''\\)\\);\nconfig.agents = [];\nfs.writeFileSync\\(path, JSON.stringify\\(config, null, ''\\\\t''\\)\\);\nconsole.log\\(''Cleared agents from config''\\);\n\")",
+      "Bash(node -e:*)",
+      "Bash(npx electron .)",
+      "Bash(netstat:*)",
+      "Bash(git remote:*)",
+      "Bash(dir:*)",
+      "Bash(timeout:*)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { ShellType, AgentPreset, ShellInfo, AgentRecentDirectories } from '@shared/types';
-import { DEFAULT_AGENTS, IPC_CHANNELS } from '@shared/constants';
+import { IPC_CHANNELS } from '@shared/constants';
 
 interface SettingsState {
   defaultShell: ShellType;
@@ -38,7 +38,7 @@ type SettingsStore = SettingsState & SettingsActions;
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
   defaultShell: 'powershell',
   availableShells: [],
-  agents: DEFAULT_AGENTS,
+  agents: [],
   agentRecentDirectories: {},
   sidebarCollapsed: false,
   autoSave: true,

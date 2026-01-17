@@ -41,7 +41,8 @@ export const SHELL_CONFIGS: Record<string, Partial<ShellInfo>> = {
   },
 };
 
-export const DEFAULT_AGENTS: AgentPreset[] = [
+// Available agent presets that users can add to their workspace
+export const AVAILABLE_AGENTS: AgentPreset[] = [
   {
     id: 'claude-code',
     name: 'Claude Code',

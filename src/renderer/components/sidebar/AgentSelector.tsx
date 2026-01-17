@@ -1,5 +1,5 @@
 import { useSettingsStore } from '../../store/settingsStore';
-import { DEFAULT_AGENTS } from '@shared/constants';
+import { AVAILABLE_AGENTS } from '@shared/constants';
 import './AgentSelector.css';
 
 interface AgentSelectorProps {
@@ -11,10 +11,10 @@ export function AgentSelector({ onClose }: AgentSelectorProps) {
 
   // Filter out agents that are already added
   const existingAgentIds = new Set(agents.map(a => a.id));
-  const availableAgents = DEFAULT_AGENTS.filter(a => !existingAgentIds.has(a.id));
+  const availableAgents = AVAILABLE_AGENTS.filter(a => !existingAgentIds.has(a.id));
 
   const handleAddAgent = (agentId: string) => {
-    const agent = DEFAULT_AGENTS.find(a => a.id === agentId);
+    const agent = AVAILABLE_AGENTS.find(a => a.id === agentId);
     if (agent) {
       addAgent({ ...agent });
       onClose();

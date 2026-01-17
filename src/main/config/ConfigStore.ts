@@ -1,12 +1,12 @@
 import Store from 'electron-store';
-import type { Workspace, AgentRecentDirectories } from '../../shared/types';
-import { BUILT_IN_THEMES, DEFAULT_AGENTS } from '../../shared/constants';
+import type { Workspace, AgentRecentDirectories, AgentPreset } from '../../shared/types';
+import { BUILT_IN_THEMES } from '../../shared/constants';
 
 interface StoreSchema {
   workspace: Workspace | null;
   recentWorkspaces: Array<{ id: string; name: string; path?: string; lastOpened: number }>;
   themes: typeof BUILT_IN_THEMES;
-  agents: typeof DEFAULT_AGENTS;
+  agents: AgentPreset[];
   agentRecentDirectories: AgentRecentDirectories;
   settings: {
     defaultShell: string;
@@ -50,7 +50,7 @@ export class ConfigStore {
         workspace: null,
         recentWorkspaces: [],
         themes: BUILT_IN_THEMES,
-        agents: DEFAULT_AGENTS,
+        agents: [],
         agentRecentDirectories: {},
         settings: defaultSettings,
         windowState: defaultWindowState,
@@ -132,7 +132,7 @@ export class ConfigStore {
     return this.store.get('themes');
   }
 
-  public getAllAgents(): typeof DEFAULT_AGENTS {
+  public getAllAgents(): AgentPreset[] {
     return this.store.get('agents');
   }
 
