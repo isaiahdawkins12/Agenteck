@@ -3,7 +3,6 @@ import { AgentList } from './AgentList';
 import { LayoutPresets } from './LayoutPresets';
 import { TerminalList } from './TerminalList';
 import { WorktreePanel } from './WorktreePanel';
-import { useTerminal } from '../../hooks/useTerminal';
 import './Sidebar.css';
 
 interface SidebarProps {
@@ -14,11 +13,6 @@ type Tab = 'agents' | 'terminals' | 'layouts' | 'git';
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>('agents');
-  const { createNewTerminal } = useTerminal();
-
-  const handleNewTerminal = async () => {
-    await createNewTerminal();
-  };
 
   if (collapsed) {
     return (
@@ -58,17 +52,6 @@ export function Sidebar({ collapsed }: SidebarProps) {
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1.323l-3.954 1.582a1.5 1.5 0 01-1.096 0L2 5.118V3a1 1 0 00-2 0v14a1 1 0 102 0v-2.118l1.95.78a3.5 3.5 0 002.558 0L10 14.323V16a1 1 0 102 0v-1.677l3.954-1.582a1.5 1.5 0 011.096 0L19 13.523V17a1 1 0 102 0V3a1 1 0 10-2 0v2.323l-1.95-.78a3.5 3.5 0 00-2.558 0L11 5.882V3a1 1 0 00-1-1zm1 4.677l3.954-1.582a1.5 1.5 0 011.096 0L19 6.677v4.646l-1.95-.78a3.5 3.5 0 00-2.558 0L11 12.123V6.677zM9 7.118L5.046 8.7a1.5 1.5 0 01-1.096 0L2 7.918v4.405l1.95.78a3.5 3.5 0 002.558 0L9 11.523V7.118z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-        <div className="sidebar-bottom">
-          <button
-            className="sidebar-icon"
-            onClick={handleNewTerminal}
-            title="New terminal"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
             </svg>
           </button>
         </div>
@@ -112,15 +95,6 @@ export function Sidebar({ collapsed }: SidebarProps) {
         {activeTab === 'terminals' && <TerminalList />}
         {activeTab === 'layouts' && <LayoutPresets />}
         {activeTab === 'git' && <WorktreePanel />}
-      </div>
-
-      <div className="sidebar-footer">
-        <button className="sidebar-action-button" onClick={handleNewTerminal}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 2v6H2v2h6v6h2v-6h6V8H10V2H8z" />
-          </svg>
-          <span>New Terminal</span>
-        </button>
       </div>
     </div>
   );
