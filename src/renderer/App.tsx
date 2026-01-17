@@ -3,6 +3,7 @@ import { Titlebar } from './components/titlebar/Titlebar';
 import { Sidebar } from './components/sidebar/Sidebar';
 import { TileContainer } from './components/layout/TileContainer';
 import { Toolbar } from './components/layout/Toolbar';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useSettingsStore } from './store/settingsStore';
 import { useLayoutStore } from './store/layoutStore';
 import { useTerminalStore } from './store/terminalStore';
@@ -20,16 +21,20 @@ function App() {
   }, [loadWorkspace, initializeListeners]);
 
   return (
-    <div className="app">
-      <Titlebar />
-      <div className="app-content">
-        <Sidebar collapsed={sidebarCollapsed} />
-        <main className="main-area">
-          <Toolbar />
-          <TileContainer />
-        </main>
+    <ErrorBoundary>
+      <div className="app">
+        <Titlebar />
+        <div className="app-content">
+          <Sidebar collapsed={sidebarCollapsed} />
+          <main className="main-area">
+            <Toolbar />
+            <ErrorBoundary>
+              <TileContainer />
+            </ErrorBoundary>
+          </main>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }
 

@@ -1,13 +1,32 @@
 import { create } from 'zustand';
 import type { MosaicNode } from 'react-mosaic-component';
 import type { Workspace } from '@shared/types';
-import { IPC_CHANNELS } from '@shared/constants';
+import { IPC_CHANNELS, DEFAULT_SNAP_ENABLED, DEFAULT_SNAP_INCREMENT } from '@shared/constants';
 import { v4 as uuidv4 } from 'uuid';
+
+// Snap utility functions
+function snapToNearest(value: number, increment: number): number {
+  const snapped = Math.round(value / increment) * increment;
+  return Math.max(increment, Math.min(100 - increment, snapped));
+}
+
+export function snapLayoutNode(node: MosaicNode<string>, increment: number): MosaicNode<string> {
+  if (typeof node === 'string') return node;
+
+  return {
+    ...node,
+    splitPercentage: snapToNearest(node.splitPercentage ?? 50, increment),
+    first: snapLayoutNode(node.first, increment),
+    second: snapLayoutNode(node.second, increment),
+  };
+}
 
 interface LayoutState {
   layout: MosaicNode<string> | null;
   workspaceId: string;
   workspaceName: string;
+  snapEnabled: boolean;
+  snapIncrement: number;
 }
 
 interface LayoutActions {
@@ -17,6 +36,8 @@ interface LayoutActions {
   loadWorkspace: () => Promise<void>;
   saveWorkspace: (terminals: Record<string, unknown>) => Promise<void>;
   createNewWorkspace: (name?: string) => void;
+  setSnapEnabled: (enabled: boolean) => void;
+  setSnapIncrement: (increment: number) => void;
 }
 
 type LayoutStore = LayoutState & LayoutActions;
@@ -25,6 +46,8 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   layout: null,
   workspaceId: uuidv4(),
   workspaceName: 'Default Workspace',
+  snapEnabled: DEFAULT_SNAP_ENABLED,
+  snapIncrement: DEFAULT_SNAP_INCREMENT,
 
   setLayout: (layout) => {
     set({ layout });
@@ -125,5 +148,13 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
       workspaceId: uuidv4(),
       workspaceName: name,
     });
+  },
+
+  setSnapEnabled: (enabled) => {
+    set({ snapEnabled: enabled });
+  },
+
+  setSnapIncrement: (increment) => {
+    set({ snapIncrement: increment });
   },
 }));

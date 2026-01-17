@@ -6,6 +6,10 @@ import type { LayoutPreset } from './types/layout';
 export const APP_NAME = 'Agenteck';
 export const APP_VERSION = '1.0.0';
 
+// Tile snapping configuration
+export const DEFAULT_SNAP_ENABLED = true;
+export const DEFAULT_SNAP_INCREMENT = 5; // 5% grid
+
 // Safe check for process.platform (not available in renderer)
 export const DEFAULT_SHELL: ShellType =
   typeof process !== 'undefined' && process.platform === 'win32' ? 'powershell' : 'bash';

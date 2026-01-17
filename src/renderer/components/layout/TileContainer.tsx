@@ -1,6 +1,6 @@
 import { Mosaic, MosaicWindow, MosaicNode, MosaicBranch } from 'react-mosaic-component';
 import { TerminalPanel } from '../terminal/TerminalPanel';
-import { useLayoutStore } from '../../store/layoutStore';
+import { useLayoutStore, snapLayoutNode } from '../../store/layoutStore';
 import { useTerminalStore } from '../../store/terminalStore';
 import 'react-mosaic-component/react-mosaic-component.css';
 import './TileContainer.css';
@@ -30,8 +30,9 @@ function TerminalToolbar({ terminalId }: { terminalId: string }) {
     }
   };
 
+  // Return a fragment with title and controls - the Mosaic library provides the toolbar container
   return (
-    <div className="mosaic-window-toolbar">
+    <>
       <div className="mosaic-window-title">
         <span className="drag-handle-icon" title="Drag to rearrange">
           <svg width="8" height="12" viewBox="0 0 10 14" fill="currentColor" opacity="0.5">
@@ -67,16 +68,26 @@ function TerminalToolbar({ terminalId }: { terminalId: string }) {
           </svg>
         </button>
       </div>
-    </div>
+    </>
   );
 }
 
 export function TileContainer() {
-  const { layout, setLayout } = useLayoutStore();
+  const { layout, setLayout, snapEnabled, snapIncrement } = useLayoutStore();
   const { terminals, setActiveTerminal } = useTerminalStore();
 
   const handleLayoutChange = (newLayout: MosaicNode<string> | null) => {
     setLayout(newLayout);
+  };
+
+  const handleLayoutRelease = (newLayout: MosaicNode<string> | null) => {
+    if (!newLayout || !snapEnabled) return;
+    if (typeof newLayout === 'string') {
+      setLayout(newLayout);
+      return;
+    }
+    const snappedLayout = snapLayoutNode(newLayout, snapIncrement);
+    setLayout(snappedLayout);
   };
 
   const renderTile = (id: string, path: MosaicBranch[]) => {
@@ -103,7 +114,6 @@ export function TileContainer() {
         title={terminal.title}
         createNode={() => id}
         onDragStart={() => setActiveTerminal(id)}
-        renderToolbar={() => <TerminalToolbar terminalId={id} />}
         renderPreview={() => (
           <div className="tile-preview">
             <span>{terminal.title}</span>
@@ -133,6 +143,7 @@ export function TileContainer() {
         renderTile={renderTile}
         value={layout}
         onChange={handleLayoutChange}
+        onRelease={handleLayoutRelease}
         className="mosaic-blueprint-theme"
         zeroStateView={
           <div className="empty-state">
