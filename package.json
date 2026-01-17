@@ -44,7 +44,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "setup": "npm install && npm link"
   },
   "dependencies": {
     "electron-store": "^8.1.0",

@@ -40,16 +40,32 @@ A highly customizable desktop application for managing multiple CLI agents (Clau
 ### Prerequisites
 
 - Node.js 18 or higher
-- npm or yarn
+- npm
 
-### From Source
+### Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/isaiah.dawkins12/agenteck.git
-cd agenteck
+git clone https://github.com/isaiahdawkins12/Agenteck.git
+cd Agenteck
 
-# Install dependencies
+# Install, build, and register the global command
+npm run setup
+
+# Now run from anywhere!
+agenteck start
+```
+
+That's it! The `agenteck` command is now available system-wide.
+
+### From Source (Development)
+
+```bash
+# Clone the repository
+git clone https://github.com/isaiahdawkins12/Agenteck.git
+cd Agenteck
+
+# Install dependencies (auto-builds)
 npm install
 
 # Run in development mode
@@ -78,57 +94,26 @@ npm run package:linux  # Linux
 
 ### Command Line Interface
 
-Agenteck includes a CLI for easy launching and management from the terminal.
-
-#### Using npm scripts
+After running `npm run setup`, the `agenteck` command is available globally:
 
 ```bash
-# Start Agenteck (foreground - waits until closed)
-npm run cli:start
-
-# Stop a running Agenteck instance
-npm run cli:stop
-
-# Check if Agenteck is running
-npm run cli:status
-
-# Show all CLI commands
-npm run cli -- help
+agenteck start       # Start Agenteck (foreground)
+agenteck start -d    # Start in background (detached)
+agenteck stop        # Stop running instance
+agenteck status      # Check if running
+agenteck restart     # Restart Agenteck
+agenteck help        # Show all commands
 ```
 
-#### Using shell scripts directly
+#### Alternative: npm scripts
+
+If you prefer not to install globally, use npm scripts from the project directory:
 
 ```bash
-# Windows
-bin\agenteck.cmd start       # Start in foreground
-bin\agenteck.cmd start -d    # Start in background (detached)
-bin\agenteck.cmd stop        # Stop running instance
-bin\agenteck.cmd status      # Check status
-bin\agenteck.cmd restart     # Restart Agenteck
-
-# macOS/Linux
-./bin/agenteck start         # Start in foreground
-./bin/agenteck start -d      # Start in background
-./bin/agenteck stop          # Stop running instance
-./bin/agenteck status        # Check status
-./bin/agenteck restart       # Restart Agenteck
-```
-
-#### Global installation
-
-After installing globally, you can use the `agenteck` command anywhere:
-
-```bash
-# Install globally
-npm install -g .
-
-# Or link for development
-npm link
-
-# Then use from anywhere
-agenteck start
-agenteck stop
-agenteck status
+npm run cli:start    # Start Agenteck
+npm run cli:stop     # Stop Agenteck
+npm run cli:status   # Check status
+npm run cli -- help  # Show help
 ```
 
 ### Standalone Executable
