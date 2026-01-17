@@ -10,7 +10,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/agenteck.git"
+    "url": "https://github.com/isaiahdawkins12/Agenteck.git"
   },
   "keywords": [
     "terminal",
@@ -92,13 +92,6 @@
       "dist/**/*",
       "node_modules/**/*",
       "package.json"
-    ],
-    "extraResources": [
-      {
-        "from": "bin/",
-        "to": "bin/",
-        "filter": ["**/*"]
-      }
     ],
     "win": {
       "target": ["nsis", "portable"],

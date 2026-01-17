@@ -40,8 +40,5 @@ coverage/
 *.temp
 .cache/
 
-# Markdown files
-*.md
-!CLAUDE.md
-!README.md
-!CONTRIBUTING.md
+# Claude Code local settings
+.claude/settings.local.json
