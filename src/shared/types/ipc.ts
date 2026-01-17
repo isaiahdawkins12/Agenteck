@@ -17,6 +17,13 @@ export interface IpcChannels {
   'config:getWorkspace': () => Promise<Workspace | null>;
   'config:saveWorkspace': (workspace: Workspace) => Promise<void>;
 
+  // Agent channels
+  'agent:getRecentDirectories': (agentId: string) => Promise<string[]>;
+  'agent:addRecentDirectory': (agentId: string, directory: string) => Promise<void>;
+  'agent:removeRecentDirectory': (agentId: string, directory: string) => Promise<void>;
+  'agent:clearRecentDirectories': (agentId: string) => Promise<void>;
+  'agent:selectDirectory': () => Promise<string | null>;
+
   // App channels
   'app:getShells': () => Promise<ShellInfo[]>;
   'app:minimize': () => Promise<void>;

@@ -1,11 +1,12 @@
 import { create } from 'zustand';
-import type { ShellType, AgentPreset, ShellInfo } from '@shared/types';
+import type { ShellType, AgentPreset, ShellInfo, AgentRecentDirectories } from '@shared/types';
 import { DEFAULT_AGENTS, IPC_CHANNELS } from '@shared/constants';
 
 interface SettingsState {
   defaultShell: ShellType;
   availableShells: ShellInfo[];
   agents: AgentPreset[];
+  agentRecentDirectories: AgentRecentDirectories;
   sidebarCollapsed: boolean;
   autoSave: boolean;
   autoSaveInterval: number;
@@ -24,6 +25,12 @@ interface SettingsActions {
   deleteAgent: (agentId: string) => void;
   setIsMaximized: (isMaximized: boolean) => void;
   initializeWindowListeners: () => () => void;
+  loadRecentDirectories: (agentId: string) => Promise<string[]>;
+  addRecentDirectory: (agentId: string, directory: string) => Promise<void>;
+  removeRecentDirectory: (agentId: string, directory: string) => Promise<void>;
+  clearRecentDirectories: (agentId: string) => Promise<void>;
+  selectDirectory: () => Promise<string | null>;
+  setAgentDefaultCwd: (agentId: string, cwd: string | undefined) => void;
 }
 
 type SettingsStore = SettingsState & SettingsActions;
@@ -32,6 +39,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   defaultShell: 'powershell',
   availableShells: [],
   agents: DEFAULT_AGENTS,
+  agentRecentDirectories: {},
   sidebarCollapsed: false,
   autoSave: true,
   autoSaveInterval: 30000,
@@ -114,5 +122,105 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     );
 
     return unsub;
+  },
+
+  loadRecentDirectories: async (agentId) => {
+    try {
+      const directories = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.GET_RECENT_DIRECTORIES,
+        agentId
+      ) as string[];
+      set((state) => ({
+        agentRecentDirectories: {
+          ...state.agentRecentDirectories,
+          [agentId]: directories,
+        },
+      }));
+      return directories;
+    } catch (error) {
+      console.error('Failed to load recent directories:', error);
+      return [];
+    }
+  },
+
+  addRecentDirectory: async (agentId, directory) => {
+    try {
+      await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.ADD_RECENT_DIRECTORY,
+        agentId,
+        directory
+      );
+      // Update local state
+      set((state) => {
+        const current = state.agentRecentDirectories[agentId] || [];
+        const filtered = current.filter((d) => d !== directory);
+        filtered.unshift(directory);
+        if (filtered.length > 10) filtered.pop();
+        return {
+          agentRecentDirectories: {
+            ...state.agentRecentDirectories,
+            [agentId]: filtered,
+          },
+        };
+      });
+    } catch (error) {
+      console.error('Failed to add recent directory:', error);
+    }
+  },
+
+  removeRecentDirectory: async (agentId, directory) => {
+    try {
+      await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.REMOVE_RECENT_DIRECTORY,
+        agentId,
+        directory
+      );
+      set((state) => ({
+        agentRecentDirectories: {
+          ...state.agentRecentDirectories,
+          [agentId]: (state.agentRecentDirectories[agentId] || []).filter(
+            (d) => d !== directory
+          ),
+        },
+      }));
+    } catch (error) {
+      console.error('Failed to remove recent directory:', error);
+    }
+  },
+
+  clearRecentDirectories: async (agentId) => {
+    try {
+      await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.CLEAR_RECENT_DIRECTORIES,
+        agentId
+      );
+      set((state) => {
+        const newDirs = { ...state.agentRecentDirectories };
+        delete newDirs[agentId];
+        return { agentRecentDirectories: newDirs };
+      });
+    } catch (error) {
+      console.error('Failed to clear recent directories:', error);
+    }
+  },
+
+  selectDirectory: async () => {
+    try {
+      const directory = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.SELECT_DIRECTORY
+      ) as string | null;
+      return directory;
+    } catch (error) {
+      console.error('Failed to select directory:', error);
+      return null;
+    }
+  },
+
+  setAgentDefaultCwd: (agentId, cwd) => {
+    set((state) => ({
+      agents: state.agents.map((a) =>
+        a.id === agentId ? { ...a, defaultCwd: cwd } : a
+      ),
+    }));
   },
 }));

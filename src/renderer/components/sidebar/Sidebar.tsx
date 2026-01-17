@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AgentList } from './AgentList';
 import { LayoutPresets } from './LayoutPresets';
 import { TerminalList } from './TerminalList';
+import { WorktreePanel } from './WorktreePanel';
 import { useTerminal } from '../../hooks/useTerminal';
 import './Sidebar.css';
 
@@ -9,7 +10,7 @@ interface SidebarProps {
   collapsed: boolean;
 }
 
-type Tab = 'agents' | 'terminals' | 'layouts';
+type Tab = 'agents' | 'terminals' | 'layouts' | 'git';
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>('agents');
@@ -50,6 +51,15 @@ export function Sidebar({ collapsed }: SidebarProps) {
               <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10-1a1 1 0 00-1 1v6a1 1 0 001 1h4a1 1 0 001-1v-6a1 1 0 00-1-1h-4z" />
             </svg>
           </button>
+          <button
+            className={`sidebar-icon ${activeTab === 'git' ? 'active' : ''}`}
+            onClick={() => setActiveTab('git')}
+            title="Git Worktrees"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1.323l-3.954 1.582a1.5 1.5 0 01-1.096 0L2 5.118V3a1 1 0 00-2 0v14a1 1 0 102 0v-2.118l1.95.78a3.5 3.5 0 002.558 0L10 14.323V16a1 1 0 102 0v-1.677l3.954-1.582a1.5 1.5 0 011.096 0L19 13.523V17a1 1 0 102 0V3a1 1 0 10-2 0v2.323l-1.95-.78a3.5 3.5 0 00-2.558 0L11 5.882V3a1 1 0 00-1-1zm1 4.677l3.954-1.582a1.5 1.5 0 011.096 0L19 6.677v4.646l-1.95-.78a3.5 3.5 0 00-2.558 0L11 12.123V6.677zM9 7.118L5.046 8.7a1.5 1.5 0 01-1.096 0L2 7.918v4.405l1.95.78a3.5 3.5 0 002.558 0L9 11.523V7.118z" clipRule="evenodd" />
+            </svg>
+          </button>
         </div>
         <div className="sidebar-bottom">
           <button
@@ -88,6 +98,12 @@ export function Sidebar({ collapsed }: SidebarProps) {
           >
             Layouts
           </button>
+          <button
+            className={`sidebar-tab ${activeTab === 'git' ? 'active' : ''}`}
+            onClick={() => setActiveTab('git')}
+          >
+            Git
+          </button>
         </div>
       </div>
 
@@ -95,6 +111,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
         {activeTab === 'agents' && <AgentList />}
         {activeTab === 'terminals' && <TerminalList />}
         {activeTab === 'layouts' && <LayoutPresets />}
+        {activeTab === 'git' && <WorktreePanel />}
       </div>
 
       <div className="sidebar-footer">

@@ -1,0 +1,471 @@
+/* WorktreePanel - Git repositories and worktrees sidebar panel */
+
+.worktree-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  height: 100%;
+}
+
+.worktree-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.worktree-panel-header h3 {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-textMuted);
+  margin: 0;
+}
+
+.worktree-count-badge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-textSecondary);
+  background-color: var(--color-background);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+/* Empty state */
+.worktree-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-textMuted);
+  gap: var(--spacing-sm);
+}
+
+.worktree-empty-icon {
+  opacity: 0.5;
+}
+
+.worktree-panel-empty p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.worktree-empty-hint {
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+}
+
+/* Repository list */
+.worktree-repo-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Repository item */
+.worktree-repo {
+  display: flex;
+  flex-direction: column;
+}
+
+.worktree-repo-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.worktree-repo-header:hover {
+  background-color: var(--color-surfaceHover);
+}
+
+.worktree-expand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-textMuted);
+  transition: transform var(--transition-fast);
+}
+
+.worktree-expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.worktree-repo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.worktree-repo-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.worktree-repo-name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.worktree-repo-branch {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-textMuted);
+}
+
+.worktree-dirty-indicator {
+  color: var(--color-warning);
+  margin-left: 2px;
+}
+
+/* Branches/worktrees container */
+.worktree-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+  border-left: 1px solid var(--color-border);
+  margin-left: var(--spacing-md);
+}
+
+/* Worktree item */
+.worktree-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.worktree-item:hover {
+  background-color: var(--color-surfaceHover);
+}
+
+.worktree-item.selected {
+  background-color: var(--color-surfaceHover);
+  border-left: 2px solid var(--color-primary);
+  margin-left: -2px;
+}
+
+.worktree-item-main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.worktree-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.worktree-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.worktree-item-branch {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.worktree-main-badge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-success);
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+}
+
+.worktree-item-path {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-textMuted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Terminal badges */
+.worktree-terminals {
+  display: flex;
+  gap: 2px;
+}
+
+.worktree-terminal-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: white;
+  opacity: 0.8;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.worktree-terminal-badge:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Remove button */
+.worktree-remove-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--color-textMuted);
+  opacity: 0;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.worktree-item:hover .worktree-remove-button {
+  opacity: 1;
+}
+
+.worktree-remove-button:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
+/* Branch item (non-worktree) */
+.worktree-branch-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.worktree-branch-item:hover {
+  background-color: var(--color-surfaceHover);
+}
+
+.worktree-branch-item.selected {
+  background-color: var(--color-surfaceHover);
+}
+
+.worktree-branch-main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.worktree-branch-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-textMuted);
+}
+
+.worktree-branch-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-textSecondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.worktree-branch-ahead {
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  font-family: var(--font-family-mono);
+}
+
+.worktree-branch-behind {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  font-family: var(--font-family-mono);
+}
+
+.worktree-add-worktree-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--color-textMuted);
+  opacity: 0;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.worktree-branch-item:hover .worktree-add-worktree-button {
+  opacity: 1;
+}
+
+.worktree-add-worktree-button:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Add worktree button */
+.worktree-add-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--color-textMuted);
+  font-size: var(--font-size-xs);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.worktree-add-button:hover {
+  background-color: var(--color-surfaceHover);
+  color: var(--color-text);
+}
+
+/* New worktree form */
+.worktree-new-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-xs);
+}
+
+.worktree-form-field input {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.worktree-form-field input:focus {
+  border-color: var(--color-primary);
+}
+
+.worktree-form-field input::placeholder {
+  color: var(--color-textMuted);
+}
+
+.worktree-form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-textSecondary);
+  cursor: pointer;
+}
+
+.worktree-form-checkbox input {
+  accent-color: var(--color-primary);
+}
+
+.worktree-form-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  justify-content: flex-end;
+}
+
+.worktree-form-cancel,
+.worktree-form-submit {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.worktree-form-cancel {
+  color: var(--color-textMuted);
+}
+
+.worktree-form-cancel:hover {
+  background-color: var(--color-surfaceHover);
+  color: var(--color-text);
+}
+
+.worktree-form-submit {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.worktree-form-submit:hover:not(:disabled) {
+  background-color: var(--color-primaryHover);
+}
+
+.worktree-form-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading spinner */
+.worktree-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+}
+
+.worktree-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: worktree-spin 0.8s linear infinite;
+}
+
+@keyframes worktree-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

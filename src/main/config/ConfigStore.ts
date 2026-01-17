@@ -1,5 +1,5 @@
 import Store from 'electron-store';
-import type { Workspace } from '../../shared/types';
+import type { Workspace, AgentRecentDirectories } from '../../shared/types';
 import { BUILT_IN_THEMES, DEFAULT_AGENTS } from '../../shared/constants';
 
 interface StoreSchema {
@@ -7,6 +7,7 @@ interface StoreSchema {
   recentWorkspaces: Array<{ id: string; name: string; path?: string; lastOpened: number }>;
   themes: typeof BUILT_IN_THEMES;
   agents: typeof DEFAULT_AGENTS;
+  agentRecentDirectories: AgentRecentDirectories;
   settings: {
     defaultShell: string;
     defaultTheme: string;
@@ -50,6 +51,7 @@ export class ConfigStore {
         recentWorkspaces: [],
         themes: BUILT_IN_THEMES,
         agents: DEFAULT_AGENTS,
+        agentRecentDirectories: {},
         settings: defaultSettings,
         windowState: defaultWindowState,
       },
@@ -132,6 +134,47 @@ export class ConfigStore {
 
   public getAllAgents(): typeof DEFAULT_AGENTS {
     return this.store.get('agents');
+  }
+
+  public getAgentRecentDirectories(): AgentRecentDirectories {
+    return this.store.get('agentRecentDirectories');
+  }
+
+  public getRecentDirectoriesForAgent(agentId: string): string[] {
+    const all = this.store.get('agentRecentDirectories');
+    return all[agentId] || [];
+  }
+
+  public addRecentDirectoryForAgent(agentId: string, directory: string, maxRecent: number = 10): void {
+    const all = this.store.get('agentRecentDirectories');
+    const agentDirs = all[agentId] || [];
+
+    // Remove if already exists to avoid duplicates
+    const filtered = agentDirs.filter((d) => d !== directory);
+
+    // Add to front of list
+    filtered.unshift(directory);
+
+    // Trim to max size
+    if (filtered.length > maxRecent) {
+      filtered.pop();
+    }
+
+    all[agentId] = filtered;
+    this.store.set('agentRecentDirectories', all);
+  }
+
+  public removeRecentDirectoryForAgent(agentId: string, directory: string): void {
+    const all = this.store.get('agentRecentDirectories');
+    const agentDirs = all[agentId] || [];
+    all[agentId] = agentDirs.filter((d) => d !== directory);
+    this.store.set('agentRecentDirectories', all);
+  }
+
+  public clearRecentDirectoriesForAgent(agentId: string): void {
+    const all = this.store.get('agentRecentDirectories');
+    delete all[agentId];
+    this.store.set('agentRecentDirectories', all);
   }
 
   public clear(): void {

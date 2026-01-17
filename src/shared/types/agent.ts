@@ -8,6 +8,11 @@ export interface AgentPreset {
   description?: string;
   website?: string;
   isBuiltIn?: boolean;
+  defaultCwd?: string;
+}
+
+export interface AgentRecentDirectories {
+  [agentId: string]: string[];
 }
 
 export interface AgentInstance {

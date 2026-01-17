@@ -23,7 +23,7 @@ export function useTerminal() {
   );
 
   const launchAgent = useCallback(
-    async (agentOrId: AgentPreset | string) => {
+    async (agentOrId: AgentPreset | string, cwd?: string) => {
       const agent = typeof agentOrId === 'string'
         ? agents.find((a) => a.id === agentOrId)
         : agentOrId;
@@ -32,11 +32,15 @@ export function useTerminal() {
         throw new Error(`Agent not found: ${agentOrId}`);
       }
 
+      // Priority: explicit cwd > agent.defaultCwd > undefined (uses process.cwd())
+      const workingDirectory = cwd ?? agent.defaultCwd;
+
       const session = await createTerminal({
         command: agent.command,
         args: agent.args,
         title: agent.name,
         themeId: agent.defaultThemeId,
+        cwd: workingDirectory,
       });
       addTile(session.id);
       return session;

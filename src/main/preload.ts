@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { IPC_CHANNELS } from '../shared/constants';
+import { GitIpcChannels } from '../shared/types/git';
 
 type Callback = (data: unknown) => void;
 
@@ -15,11 +16,25 @@ const validInvokeChannels: readonly string[] = [
   IPC_CHANNELS.CONFIG.DELETE,
   IPC_CHANNELS.CONFIG.GET_WORKSPACE,
   IPC_CHANNELS.CONFIG.SAVE_WORKSPACE,
+  IPC_CHANNELS.AGENT.GET_RECENT_DIRECTORIES,
+  IPC_CHANNELS.AGENT.ADD_RECENT_DIRECTORY,
+  IPC_CHANNELS.AGENT.REMOVE_RECENT_DIRECTORY,
+  IPC_CHANNELS.AGENT.CLEAR_RECENT_DIRECTORIES,
+  IPC_CHANNELS.AGENT.SELECT_DIRECTORY,
   IPC_CHANNELS.APP.GET_SHELLS,
   IPC_CHANNELS.APP.MINIMIZE,
   IPC_CHANNELS.APP.MAXIMIZE,
   IPC_CHANNELS.APP.CLOSE,
   IPC_CHANNELS.APP.IS_MAXIMIZED,
+  // Git channels
+  GitIpcChannels.DETECT_REPO,
+  GitIpcChannels.GET_STATUS,
+  GitIpcChannels.GET_REPOSITORY,
+  GitIpcChannels.LIST_WORKTREES,
+  GitIpcChannels.LIST_BRANCHES,
+  GitIpcChannels.CREATE_WORKTREE,
+  GitIpcChannels.REMOVE_WORKTREE,
+  GitIpcChannels.REFRESH,
 ];
 
 const validEventChannels: readonly string[] = [

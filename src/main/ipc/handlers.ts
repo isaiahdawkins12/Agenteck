@@ -1,4 +1,4 @@
-import { BrowserWindow, IpcMain } from 'electron';
+import { BrowserWindow, IpcMain, dialog } from 'electron';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
@@ -92,6 +92,39 @@ export function registerIpcHandlers(
   ipcMain.handle(IPC_CHANNELS.APP.IS_MAXIMIZED, async () => {
     const window = getWindow();
     return window?.isMaximized() ?? false;
+  });
+
+  // Agent directory handlers
+  ipcMain.handle(IPC_CHANNELS.AGENT.GET_RECENT_DIRECTORIES, async (_event, agentId: string) => {
+    return configStore.getRecentDirectoriesForAgent(agentId);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.ADD_RECENT_DIRECTORY, async (_event, agentId: string, directory: string) => {
+    configStore.addRecentDirectoryForAgent(agentId, directory);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.REMOVE_RECENT_DIRECTORY, async (_event, agentId: string, directory: string) => {
+    configStore.removeRecentDirectoryForAgent(agentId, directory);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.CLEAR_RECENT_DIRECTORIES, async (_event, agentId: string) => {
+    configStore.clearRecentDirectoriesForAgent(agentId);
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.SELECT_DIRECTORY, async () => {
+    const window = getWindow();
+    if (!window) return null;
+
+    const result = await dialog.showOpenDialog(window, {
+      properties: ['openDirectory'],
+      title: 'Select Working Directory',
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null;
+    }
+
+    return result.filePaths[0];
   });
 }
 

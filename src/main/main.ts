@@ -3,6 +3,7 @@ import * as path from 'path';
 import { TerminalManager } from './terminal/TerminalManager';
 import { ConfigStore } from './config/ConfigStore';
 import { registerIpcHandlers } from './ipc/handlers';
+import { registerGitIpcHandlers } from './git';
 
 let mainWindow: BrowserWindow | null = null;
 let terminalManager: TerminalManager | null = null;
@@ -39,8 +40,6 @@ function createWindow(): void {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
 
-  // Open DevTools for debugging
-  mainWindow.webContents.openDevTools();
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
@@ -58,6 +57,14 @@ function createWindow(): void {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // Register F12 and Ctrl+Shift+I to toggle DevTools
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F12' || (input.control && input.shift && input.key === 'I')) {
+      mainWindow?.webContents.toggleDevTools();
+      event.preventDefault();
+    }
+  });
 }
 
 async function initialize(): Promise<void> {
@@ -65,6 +72,7 @@ async function initialize(): Promise<void> {
   terminalManager = new TerminalManager();
 
   registerIpcHandlers(ipcMain, terminalManager, configStore, () => mainWindow);
+  registerGitIpcHandlers();
 }
 
 app.whenReady().then(async () => {
