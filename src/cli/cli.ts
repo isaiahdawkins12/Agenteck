@@ -203,10 +203,11 @@ const args = process.argv.slice(2);
 const command = args[0]?.toLowerCase() || 'help';
 
 switch (command) {
-  case 'start':
+  case 'start': {
     const detached = args.includes('-d') || args.includes('--detached');
     start(detached);
     break;
+  }
   case 'stop':
     stop();
     break;

@@ -5,7 +5,6 @@
 import { create } from 'zustand';
 import type {
   Repository,
-  Worktree,
   Branch,
   GitStatus,
   TerminalGitContext,
@@ -138,9 +137,9 @@ export const useGitStore = create<GitStore>((set, get) => ({
       }
 
       // Detect or get the repository
-      let repo = Object.values(get().repositories).find(r => r.rootPath === status.rootPath);
+      let repo: Repository | undefined = Object.values(get().repositories).find(r => r.rootPath === status.rootPath);
       if (!repo) {
-        repo = await get().detectRepository(cwd);
+        repo = (await get().detectRepository(cwd)) ?? undefined;
       }
 
       if (!repo) return;
@@ -196,6 +195,7 @@ export const useGitStore = create<GitStore>((set, get) => ({
 
   removeTerminalContext: (terminalId: string) => {
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [terminalId]: removed, ...remainingContexts } = state.terminalContexts;
 
       // Remove terminal from all worktree associations

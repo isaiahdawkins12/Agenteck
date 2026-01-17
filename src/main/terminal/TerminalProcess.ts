@@ -99,6 +99,8 @@ export class TerminalProcess {
 
       if (process.platform !== 'win32') {
         this.ptyProcess.onData((data: string) => {
+          // Match OSC title sequence: ESC ] 0 ; title BEL
+          // eslint-disable-next-line no-control-regex
           const titleMatch = data.match(/\x1b]0;(.+?)\x07/);
           if (titleMatch) {
             this.session.title = titleMatch[1];

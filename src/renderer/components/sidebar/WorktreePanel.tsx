@@ -228,7 +228,6 @@ interface WorktreeItemProps {
 
 function WorktreeItem({
   worktree,
-  repoId,
   isSelected,
   statusColor,
   onClick,
@@ -301,7 +300,6 @@ interface BranchItemProps {
 
 function BranchItem({
   branch,
-  repoId,
   repoPath,
   isSelected,
   onClick,

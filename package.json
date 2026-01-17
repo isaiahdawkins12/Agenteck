@@ -2,6 +2,7 @@
   "name": "agenteck",
   "version": "0.1.0",
   "description": "A highly customizable multi-agent terminal orchestrator for managing CLI agents like Claude Code",
+  "type": "module",
   "main": "dist/main/main.js",
   "bin": {
     "agenteck": "dist/cli/cli.js"

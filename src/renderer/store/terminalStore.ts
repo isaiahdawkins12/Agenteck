@@ -54,7 +54,9 @@ export const useTerminalStore = create<TerminalStore>((set, get) => ({
     await window.electronAPI.invoke(IPC_CHANNELS.TERMINAL.KILL, id);
 
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [id]: removed, ...remaining } = state.terminals;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [id]: removedBuffer, ...remainingBuffers } = state.outputBuffers;
 
       let newActiveId = state.activeTerminalId;

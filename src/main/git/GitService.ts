@@ -220,7 +220,7 @@ export class GitService {
       const lines = output.split('\n').filter(Boolean);
 
       for (const line of lines) {
-        const [name, _upstream, track, head] = line.split('|');
+        const [name, , track, head] = line.split('|');
 
         // Parse ahead/behind from track (e.g., "[ahead 1, behind 2]")
         let ahead: number | undefined;

@@ -1,4 +1,4 @@
-import { Mosaic, MosaicWindow, MosaicNode } from 'react-mosaic-component';
+import { Mosaic, MosaicWindow, MosaicNode, MosaicBranch } from 'react-mosaic-component';
 import { TerminalPanel } from '../terminal/TerminalPanel';
 import { useLayoutStore } from '../../store/layoutStore';
 import { useTerminalStore } from '../../store/terminalStore';
@@ -13,7 +13,7 @@ export function TileContainer() {
     setLayout(newLayout);
   };
 
-  const renderTile = (id: string, path: number[]) => {
+  const renderTile = (id: string, path: MosaicBranch[]) => {
     const terminal = terminals[id];
 
     if (!terminal) {

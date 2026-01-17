@@ -1,5 +1,6 @@
 import type { TerminalSession, TerminalCreateOptions, TerminalSize, ShellInfo } from './terminal';
 import type { Workspace } from './workspace';
+import type { Repository, GitStatus, Branch, CreateWorktreeOptions, GitOperationResult } from './git';
 
 export interface IpcChannels {
   // Terminal channels
@@ -30,6 +31,16 @@ export interface IpcChannels {
   'app:maximize': () => Promise<void>;
   'app:close': () => Promise<void>;
   'app:isMaximized': () => Promise<boolean>;
+
+  // Git channels
+  'git:detect-repo': (dirPath: string) => Promise<boolean>;
+  'git:get-status': (dirPath: string) => Promise<GitStatus>;
+  'git:get-repository': (dirPath: string) => Promise<Repository | null>;
+  'git:list-worktrees': (repoPath: string) => Promise<Repository['worktrees']>;
+  'git:list-branches': (repoPath: string) => Promise<Branch[]>;
+  'git:create-worktree': (options: CreateWorktreeOptions) => Promise<GitOperationResult>;
+  'git:remove-worktree': (repoPath: string, worktreePath: string, force: boolean) => Promise<GitOperationResult>;
+  'git:refresh': (repoPath: string) => Promise<Repository | null>;
 }
 
 export interface IpcEvents {

@@ -14,7 +14,7 @@ export function AgentLaunchButton({ agent, icon }: AgentLaunchButtonProps) {
   const [recentDirectories, setRecentDirectories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const { launchAgent } = useTerminal();
   const {
