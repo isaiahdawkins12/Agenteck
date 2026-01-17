@@ -148,6 +148,46 @@ Terminal now displays correctly and fills the entire panel
 
 ---
 
+### Session: Agent Launching Fix
+
+**Status:** Fixed and working
+
+#### Problem:
+Clicking on an agent (like Claude Code) in the Agents tab did nothing. The agent command failed to spawn on Windows.
+
+#### Root Cause:
+On Windows, CLI tools installed via npm (like `claude` from `@anthropic-ai/claude-code`) are actually `.cmd` wrapper scripts. When `node-pty` tries to spawn `claude` directly, Windows can't find it because it needs either:
+- The full path to the executable
+- The `.cmd` extension
+- Or to be run through a shell that resolves these
+
+#### Fix:
+Modified `TerminalProcess.spawn()` to run agent commands through `cmd.exe /c` on Windows:
+
+```typescript
+if (options.command) {
+  if (process.platform === 'win32') {
+    // On Windows, run commands through cmd.exe to properly resolve .cmd/.bat scripts
+    shell = 'cmd.exe';
+    const fullCommand = options.args && options.args.length > 0
+      ? `${options.command} ${options.args.join(' ')}`
+      : options.command;
+    args = ['/c', fullCommand];
+  } else {
+    shell = options.command;
+    args = options.args || [];
+  }
+}
+```
+
+#### Files Modified:
+- `src/main/terminal/TerminalProcess.ts` - Run agent commands through cmd.exe on Windows
+
+#### Result:
+Agent launching now works correctly. Clicking "Claude Code" opens a terminal running the claude CLI
+
+---
+
 ## Planned Features (from README)
 
 - [ ] Multi-Agent Support (Claude Code, GitHub Copilot CLI, Aider, Cline, Continue)

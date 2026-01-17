@@ -44,8 +44,18 @@ export class TerminalProcess {
 
     if (options.command) {
       // Launching a specific command/agent
-      shell = options.command;
-      args = options.args || [];
+      if (process.platform === 'win32') {
+        // On Windows, run commands through cmd.exe to properly resolve .cmd/.bat scripts
+        // This handles npm-installed CLI tools like 'claude', 'aider', etc.
+        shell = 'cmd.exe';
+        const fullCommand = options.args && options.args.length > 0
+          ? `${options.command} ${options.args.join(' ')}`
+          : options.command;
+        args = ['/c', fullCommand];
+      } else {
+        shell = options.command;
+        args = options.args || [];
+      }
     } else {
       // Starting a shell
       shell = shellConfig?.path || this.getDefaultShellPath();
