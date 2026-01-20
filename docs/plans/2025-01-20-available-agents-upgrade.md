@@ -1,7 +1,7 @@
 # Available Agents Tab Upgrade
 
 **Date:** 2025-01-20
-**Status:** In Progress
+**Status:** Complete
 **Branch:** master
 
 ## Overview
@@ -142,23 +142,23 @@ Icons will be imported as React components or image sources.
 
 ## Task Checklist
 
-- [ ] Create planning documentation (this file)
-- [ ] Phase 1: Persistence Infrastructure
-  - [ ] Add IPC channels to constants.ts
-  - [ ] Add agent CRUD methods to ConfigStore
-  - [ ] Add IPC handlers for agents
-  - [ ] Update settingsStore to load/save via IPC
-- [ ] Phase 2: Update Agent Definitions
-  - [ ] Replace AVAILABLE_AGENTS with new agents
-  - [ ] Remove old agent icon mappings
-- [ ] Phase 3: Add SVG Icons
-  - [ ] Create agent-icons directory
-  - [ ] Add claude.svg
-  - [ ] Add gemini.svg
-  - [ ] Add codex.svg
-  - [ ] Add qwen.svg
-  - [ ] Add opencode.svg
-  - [ ] Update components to use SVG icons
+- [x] Create planning documentation (this file)
+- [x] Phase 1: Persistence Infrastructure
+  - [x] Add IPC channels to constants.ts
+  - [x] Add agent CRUD methods to ConfigStore
+  - [x] Add IPC handlers for agents
+  - [x] Update settingsStore to load/save via IPC
+- [x] Phase 2: Update Agent Definitions
+  - [x] Replace AVAILABLE_AGENTS with new agents
+  - [x] Remove old agent icon mappings
+- [x] Phase 3: Add SVG Icons
+  - [x] Create agent-icons directory
+  - [x] Add claude.svg
+  - [x] Add gemini.svg
+  - [x] Add codex.svg
+  - [x] Add qwen.svg
+  - [x] Add opencode.svg
+  - [x] Update components to use SVG icons
 - [ ] Phase 4: Testing
   - [ ] Test empty state
   - [ ] Test adding agents
