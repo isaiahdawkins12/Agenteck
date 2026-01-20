@@ -672,6 +672,10 @@ export const IPC_CHANNELS = {
     SAVE_WORKSPACE: 'config:saveWorkspace',
   },
   AGENT: {
+    GET_ALL: 'agent:getAll',
+    ADD: 'agent:add',
+    REMOVE: 'agent:remove',
+    UPDATE: 'agent:update',
     GET_RECENT_DIRECTORIES: 'agent:getRecentDirectories',
     ADD_RECENT_DIRECTORY: 'agent:addRecentDirectory',
     REMOVE_RECENT_DIRECTORY: 'agent:removeRecentDirectory',

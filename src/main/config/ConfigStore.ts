@@ -136,6 +136,30 @@ export class ConfigStore {
     return this.store.get('agents');
   }
 
+  public addAgent(agent: AgentPreset): void {
+    const agents = this.store.get('agents');
+    // Don't add if already exists
+    if (agents.some((a) => a.id === agent.id)) {
+      return;
+    }
+    agents.push(agent);
+    this.store.set('agents', agents);
+  }
+
+  public removeAgent(agentId: string): void {
+    const agents = this.store.get('agents');
+    this.store.set('agents', agents.filter((a) => a.id !== agentId));
+  }
+
+  public updateAgent(agentId: string, updates: Partial<AgentPreset>): void {
+    const agents = this.store.get('agents');
+    const index = agents.findIndex((a) => a.id === agentId);
+    if (index !== -1) {
+      agents[index] = { ...agents[index], ...updates };
+      this.store.set('agents', agents);
+    }
+  }
+
   public getAgentRecentDirectories(): AgentRecentDirectories {
     return this.store.get('agentRecentDirectories');
   }
