@@ -58,9 +58,11 @@ export function AgentList() {
 
 function getDefaultAgentIcon(agentId: string): string {
   const icons: Record<string, string> = {
-    'claude-code': '🤖',
-    'openai-codex': '🧠',
+    'claude': '🤖',
     'gemini': '✨',
+    'codex': '🧠',
+    'qwen': '🔮',
+    'opencode': '💻',
   };
   return icons[agentId] || '⚡';
 }

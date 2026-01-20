@@ -61,11 +61,11 @@ export function AgentSelector({ onClose }: AgentSelectorProps) {
 
 function getAgentIcon(agentId: string): string {
   const icons: Record<string, string> = {
-    'claude-code': '🤖',
-    'copilot-cli': '🐙',
-    'aider': '🔧',
-    'cline': '⚡',
-    'continue': '▶️',
+    'claude': '🤖',
+    'gemini': '✨',
+    'codex': '🧠',
+    'qwen': '🔮',
+    'opencode': '💻',
   };
   return icons[agentId] || '🤖';
 }
