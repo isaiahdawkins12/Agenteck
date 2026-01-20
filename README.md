@@ -13,11 +13,11 @@ A desktop application for managing multiple CLI AI agents in a unified tiling in
 
 <!-- TODO: Screenshot - Tiling layout with 3-4 terminals arranged -->
 ![Tiling Layout](docs/screenshots/tiling-layout.png)
-
+<!-- 
 **Theming** — Built-in themes (Dracula, Nord, Monokai, Tokyo Night) with per-terminal overrides and a custom theme editor.
 
 <!-- TODO: Screenshot - Theme selector or theme editor panel -->
-![Theme Selection](docs/screenshots/themes.png)
+![Theme Selection](docs/screenshots/themes.png) -->
 
 **Terminal Emulation** — Powered by xterm.js with full ANSI colors, clickable URLs, Unicode, and scrollback.
 
@@ -90,9 +90,9 @@ Without global install, use `npm run cli:start`, `npm run cli:stop`, etc.
 **Managing Layout** — Drag terminals to split horizontally/vertically. Drag borders to resize. Use the Layouts tab for presets.
 
 <!-- TODO: Screenshot - Settings panel showing theme options -->
-![Settings Panel](docs/screenshots/settings.png)
+<!-- ![Settings Panel](docs/screenshots/settings.png) -->
 
-**Customizing Themes** — Open Settings (gear icon), select a theme, or create a custom one with the theme editor.
+<!-- **Customizing Themes** — Open Settings (gear icon), select a theme, or create a custom one with the theme editor. -->
 
 ## Architecture
 
