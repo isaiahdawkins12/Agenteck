@@ -17,6 +17,7 @@ release/
 .DS_Store
 Thumbs.db
 Desktop.ini
+nul
 
 # Logs
 *.log
@@ -28,6 +29,7 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+.npmrc
 
 # Testing
 coverage/
