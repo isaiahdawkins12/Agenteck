@@ -95,6 +95,26 @@ export function registerIpcHandlers(
     return window?.isMaximized() ?? false;
   });
 
+  // Agent persistence handlers
+  ipcMain.handle(IPC_CHANNELS.AGENT.GET_ALL, async () => {
+    return configStore.getAllAgents();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.ADD, async (_event, agent: import('../../shared/types').AgentPreset) => {
+    configStore.addAgent(agent);
+    return configStore.getAllAgents();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.REMOVE, async (_event, agentId: string) => {
+    configStore.removeAgent(agentId);
+    return configStore.getAllAgents();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.AGENT.UPDATE, async (_event, agentId: string, updates: Partial<import('../../shared/types').AgentPreset>) => {
+    configStore.updateAgent(agentId, updates);
+    return configStore.getAllAgents();
+  });
+
   // Agent directory handlers
   ipcMain.handle(IPC_CHANNELS.AGENT.GET_RECENT_DIRECTORIES, async (_event, agentId: string) => {
     return configStore.getRecentDirectoriesForAgent(agentId);

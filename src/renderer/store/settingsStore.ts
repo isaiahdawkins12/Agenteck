@@ -20,9 +20,10 @@ interface SettingsActions {
   toggleSidebar: () => void;
   setAutoSave: (enabled: boolean) => void;
   setAutoSaveInterval: (interval: number) => void;
-  addAgent: (agent: AgentPreset) => void;
-  updateAgent: (agentId: string, updates: Partial<AgentPreset>) => void;
-  deleteAgent: (agentId: string) => void;
+  loadAgents: () => Promise<void>;
+  addAgent: (agent: AgentPreset) => Promise<void>;
+  updateAgent: (agentId: string, updates: Partial<AgentPreset>) => Promise<void>;
+  deleteAgent: (agentId: string) => Promise<void>;
   setIsMaximized: (isMaximized: boolean) => void;
   initializeWindowListeners: () => () => void;
   loadRecentDirectories: (agentId: string) => Promise<string[]>;
@@ -30,7 +31,7 @@ interface SettingsActions {
   removeRecentDirectory: (agentId: string, directory: string) => Promise<void>;
   clearRecentDirectories: (agentId: string) => Promise<void>;
   selectDirectory: () => Promise<string | null>;
-  setAgentDefaultCwd: (agentId: string, cwd: string | undefined) => void;
+  setAgentDefaultCwd: (agentId: string, cwd: string | undefined) => Promise<void>;
 }
 
 type SettingsStore = SettingsState & SettingsActions;
@@ -76,28 +77,52 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     set({ autoSaveInterval: interval });
   },
 
-  addAgent: (agent) => {
-    set((state) => ({
-      agents: [...state.agents, { ...agent, isBuiltIn: false }],
-    }));
+  loadAgents: async () => {
+    try {
+      const agents = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.GET_ALL
+      ) as AgentPreset[];
+      set({ agents });
+    } catch (error) {
+      console.error('Failed to load agents:', error);
+    }
   },
 
-  updateAgent: (agentId, updates) => {
-    set((state) => ({
-      agents: state.agents.map((a) =>
-        a.id === agentId ? { ...a, ...updates } : a
-      ),
-    }));
+  addAgent: async (agent) => {
+    try {
+      const agents = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.ADD,
+        agent
+      ) as AgentPreset[];
+      set({ agents });
+    } catch (error) {
+      console.error('Failed to add agent:', error);
+    }
   },
 
-  deleteAgent: (agentId) => {
-    set((state) => {
-      const agent = state.agents.find((a) => a.id === agentId);
-      if (agent?.isBuiltIn) return state;
-      return {
-        agents: state.agents.filter((a) => a.id !== agentId),
-      };
-    });
+  updateAgent: async (agentId, updates) => {
+    try {
+      const agents = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.UPDATE,
+        agentId,
+        updates
+      ) as AgentPreset[];
+      set({ agents });
+    } catch (error) {
+      console.error('Failed to update agent:', error);
+    }
+  },
+
+  deleteAgent: async (agentId) => {
+    try {
+      const agents = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.REMOVE,
+        agentId
+      ) as AgentPreset[];
+      set({ agents });
+    } catch (error) {
+      console.error('Failed to delete agent:', error);
+    }
   },
 
   setIsMaximized: (isMaximized) => {
@@ -216,11 +241,16 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     }
   },
 
-  setAgentDefaultCwd: (agentId, cwd) => {
-    set((state) => ({
-      agents: state.agents.map((a) =>
-        a.id === agentId ? { ...a, defaultCwd: cwd } : a
-      ),
-    }));
+  setAgentDefaultCwd: async (agentId, cwd) => {
+    try {
+      const agents = await window.electronAPI.invoke(
+        IPC_CHANNELS.AGENT.UPDATE,
+        agentId,
+        { defaultCwd: cwd }
+      ) as AgentPreset[];
+      set({ agents });
+    } catch (error) {
+      console.error('Failed to set agent default cwd:', error);
+    }
   },
 }));

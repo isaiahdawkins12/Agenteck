@@ -10,15 +10,16 @@ import { useTerminalStore } from './store/terminalStore';
 import './styles/app.css';
 
 function App() {
-  const { sidebarCollapsed } = useSettingsStore();
+  const { sidebarCollapsed, loadAgents } = useSettingsStore();
   const { loadWorkspace } = useLayoutStore();
   const { initializeListeners } = useTerminalStore();
 
   useEffect(() => {
     loadWorkspace();
+    loadAgents();
     const cleanup = initializeListeners();
     return cleanup;
-  }, [loadWorkspace, initializeListeners]);
+  }, [loadWorkspace, loadAgents, initializeListeners]);
 
   return (
     <ErrorBoundary>
