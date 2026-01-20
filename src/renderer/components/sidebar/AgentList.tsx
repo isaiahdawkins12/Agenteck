@@ -46,7 +46,6 @@ export function AgentList() {
             <AgentLaunchButton
               key={agent.id}
               agent={agent}
-              icon={agent.icon || getDefaultAgentIcon(agent.id)}
               onRemove={() => deleteAgent(agent.id)}
             />
           ))
@@ -54,15 +53,4 @@ export function AgentList() {
       </div>
     </div>
   );
-}
-
-function getDefaultAgentIcon(agentId: string): string {
-  const icons: Record<string, string> = {
-    'claude': '🤖',
-    'gemini': '✨',
-    'codex': '🧠',
-    'qwen': '🔮',
-    'opencode': '💻',
-  };
-  return icons[agentId] || '⚡';
 }

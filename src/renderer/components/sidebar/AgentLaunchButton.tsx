@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useTerminal } from '../../hooks/useTerminal';
+import { AgentIcon } from './AgentIcon';
 import type { AgentPreset } from '@shared/types';
 import './AgentLaunchButton.css';
 
 interface AgentLaunchButtonProps {
   agent: AgentPreset;
-  icon: string;
   onRemove?: () => void;
 }
 
-export function AgentLaunchButton({ agent, icon, onRemove }: AgentLaunchButtonProps) {
+export function AgentLaunchButton({ agent, onRemove }: AgentLaunchButtonProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [recentDirectories, setRecentDirectories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,7 +125,9 @@ export function AgentLaunchButton({ agent, icon, onRemove }: AgentLaunchButtonPr
           title={agent.description || `Launch ${agent.name}`}
           disabled={isLoading}
         >
-          <div className="agent-icon">{icon}</div>
+          <div className="agent-icon">
+            <AgentIcon agentId={agent.id} size={24} />
+          </div>
           <div className="agent-info">
             <span className="agent-name">{agent.name}</span>
             <span className="agent-command">

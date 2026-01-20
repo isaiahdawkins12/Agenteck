@@ -1,5 +1,6 @@
 import { useSettingsStore } from '../../store/settingsStore';
 import { AVAILABLE_AGENTS } from '@shared/constants';
+import { AgentIcon } from './AgentIcon';
 import './AgentSelector.css';
 
 interface AgentSelectorProps {
@@ -45,7 +46,7 @@ export function AgentSelector({ onClose }: AgentSelectorProps) {
               onClick={() => handleAddAgent(agent.id)}
             >
               <span className="agent-selector-icon">
-                {getAgentIcon(agent.id)}
+                <AgentIcon agentId={agent.id} size={20} />
               </span>
               <div className="agent-selector-info">
                 <span className="agent-selector-name">{agent.name}</span>
@@ -57,15 +58,4 @@ export function AgentSelector({ onClose }: AgentSelectorProps) {
       )}
     </div>
   );
-}
-
-function getAgentIcon(agentId: string): string {
-  const icons: Record<string, string> = {
-    'claude': '🤖',
-    'gemini': '✨',
-    'codex': '🧠',
-    'qwen': '🔮',
-    'opencode': '💻',
-  };
-  return icons[agentId] || '🤖';
 }
