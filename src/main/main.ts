@@ -4,6 +4,20 @@ import { TerminalManager } from './terminal/TerminalManager';
 import { ConfigStore } from './config/ConfigStore';
 import { registerIpcHandlers } from './ipc/handlers';
 import { registerGitIpcHandlers } from './git';
+import type { StartupConfig } from '../shared/types/startup';
+import { AVAILABLE_AGENTS } from '../shared/constants';
+
+function getStartupConfig(): StartupConfig | null {
+  const configJson = process.env.AGENTECK_STARTUP_CONFIG;
+  if (!configJson) return null;
+
+  try {
+    return JSON.parse(configJson) as StartupConfig;
+  } catch {
+    console.error('Failed to parse AGENTECK_STARTUP_CONFIG');
+    return null;
+  }
+}
 
 let mainWindow: BrowserWindow | null = null;
 let terminalManager: TerminalManager | null = null;
@@ -76,9 +90,39 @@ async function initialize(): Promise<void> {
   registerGitIpcHandlers();
 }
 
+async function createStartupTerminals(startupConfig: StartupConfig): Promise<void> {
+  if (!terminalManager || !mainWindow) return;
+
+  for (const terminalConfig of startupConfig.terminals) {
+    const agent = AVAILABLE_AGENTS.find(a => a.id === terminalConfig.agentId);
+
+    const session = terminalManager.create({
+      cwd: terminalConfig.cwd,
+      command: agent?.command,
+      args: agent?.args,
+      title: agent?.name || terminalConfig.agentId,
+    });
+
+    // Notify renderer about new terminal
+    mainWindow.webContents.send('terminal:created', session);
+  }
+}
+
 app.whenReady().then(async () => {
   await initialize();
   createWindow();
+
+  const startupConfig = getStartupConfig();
+
+  // Wait for window to be ready before creating terminals
+  mainWindow?.webContents.once('did-finish-load', async () => {
+    if (startupConfig && startupConfig.terminals.length > 0) {
+      // Small delay to ensure renderer is fully initialized
+      setTimeout(() => {
+        createStartupTerminals(startupConfig);
+      }, 500);
+    }
+  });
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

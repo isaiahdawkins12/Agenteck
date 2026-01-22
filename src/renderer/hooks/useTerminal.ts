@@ -8,7 +8,7 @@ export function useTerminal() {
   const { createTerminal, killTerminal, terminals, activeTerminalId, setActiveTerminal } =
     useTerminalStore();
   const { addTile, removeTile } = useLayoutStore();
-  const { defaultShell, agents } = useSettingsStore();
+  const { defaultShell, agentShell, agents } = useSettingsStore();
 
   const createNewTerminal = useCallback(
     async (options?: TerminalCreateOptions) => {
@@ -41,11 +41,12 @@ export function useTerminal() {
         title: agent.name,
         themeId: agent.defaultThemeId,
         cwd: workingDirectory,
+        agentShell: agentShell,
       });
       addTile(session.id);
       return session;
     },
-    [createTerminal, addTile, agents]
+    [createTerminal, addTile, agents, agentShell]
   );
 
   const closeTerminal = useCallback(

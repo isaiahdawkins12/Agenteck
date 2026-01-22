@@ -1,7 +1,59 @@
 import * as pty from 'node-pty';
+import * as os from 'os';
+import { execSync } from 'child_process';
 import { v4 as uuidv4 } from 'uuid';
 import type { TerminalSession, TerminalCreateOptions, ShellType, TerminalSize } from '../../shared/types';
 import { SHELL_CONFIGS, DEFAULT_SHELL } from '../../shared/constants';
+
+// Cache for user PATH from registry (Windows only)
+let cachedUserPath: string | null = null;
+
+/**
+ * On Windows, Electron often doesn't inherit the full user PATH when launched from
+ * Explorer or VS Code. This function reads the user's PATH directly from the registry
+ * to ensure CLI tools installed via npm, WinGet, etc. are available.
+ */
+function getWindowsUserPath(): string {
+  if (process.platform !== 'win32') return '';
+
+  if (cachedUserPath !== null) return cachedUserPath;
+
+  try {
+    cachedUserPath = execSync(
+      'powershell.exe -NoProfile -Command "[Environment]::GetEnvironmentVariable(\'Path\', \'User\')"',
+      { encoding: 'utf8', timeout: 5000 }
+    ).trim();
+    return cachedUserPath;
+  } catch {
+    cachedUserPath = '';
+    return '';
+  }
+}
+
+/**
+ * Merges the user's PATH from the registry with the current process PATH,
+ * ensuring tools installed to user-specific locations are available.
+ */
+function getEnhancedPath(): string {
+  const currentPath = process.env.PATH || process.env.Path || '';
+
+  if (process.platform !== 'win32') return currentPath;
+
+  const userPath = getWindowsUserPath();
+  if (!userPath) return currentPath;
+
+  // Merge paths, avoiding duplicates
+  const currentPaths = new Set(currentPath.split(';').map(p => p.toLowerCase()));
+  const newPaths: string[] = [];
+
+  for (const p of userPath.split(';')) {
+    if (p && !currentPaths.has(p.toLowerCase())) {
+      newPaths.push(p);
+    }
+  }
+
+  return newPaths.length > 0 ? `${currentPath};${newPaths.join(';')}` : currentPath;
+}
 
 export class TerminalProcess {
   public readonly id: string;
@@ -21,7 +73,7 @@ export class TerminalProcess {
       id: this.id,
       title: options.title || this.getDefaultTitle(shellType),
       shellType,
-      cwd: options.cwd || process.cwd(),
+      cwd: options.cwd || os.homedir(),
       command: options.command,
       args: options.args,
       env: options.env,
@@ -44,17 +96,34 @@ export class TerminalProcess {
 
     if (options.command) {
       // Launching a specific command/agent
+      const fullCommand = options.args && options.args.length > 0
+        ? `${options.command} ${options.args.join(' ')}`
+        : options.command;
+
       if (process.platform === 'win32') {
-        // On Windows, run commands through cmd.exe to properly resolve .cmd/.bat scripts
-        // This handles npm-installed CLI tools like 'claude', 'aider', etc.
-        shell = 'cmd.exe';
-        const fullCommand = options.args && options.args.length > 0
-          ? `${options.command} ${options.args.join(' ')}`
-          : options.command;
-        args = ['/c', fullCommand];
+        // On Windows, use the configured agent shell (PowerShell or cmd.exe)
+        const agentShell = options.agentShell || 'powershell';
+        if (agentShell === 'powershell') {
+          // Use PowerShell to run the command
+          // IMPORTANT:
+          // 1. Load the user's profile to get PATH additions from npm, WinGet, etc.
+          // 2. Explicitly Set-Location to the cwd because -Command doesn't respect PTY cwd
+          shell = 'powershell.exe';
+          const targetDir = this.session.cwd.replace(/'/g, "''"); // Escape single quotes for PS
+          const wrappedCommand = `& { if (Test-Path $PROFILE) { . $PROFILE 2>$null }; Set-Location -LiteralPath '${targetDir}'; ${fullCommand} }`;
+          args = ['-NoExit', '-Command', wrappedCommand];
+        } else {
+          // Fall back to cmd.exe for users who prefer it
+          shell = 'cmd.exe';
+          args = ['/c', fullCommand];
+        }
       } else {
-        shell = options.command;
-        args = options.args || [];
+        // On Linux/macOS, use the configured shell (bash, zsh, etc.)
+        const agentShell = options.agentShell || 'bash';
+        const shellPath = SHELL_CONFIGS[agentShell]?.path || '/bin/bash';
+        shell = shellPath;
+        // Use -l for login shell (loads profile), -c to run command
+        args = ['-l', '-c', fullCommand];
       }
     } else {
       // Starting a shell
@@ -67,11 +136,15 @@ export class TerminalProcess {
       shell = this.getDefaultShellPath();
     }
 
-    console.log('Spawning terminal:', { shell, args, cwd: this.session.cwd });
-
+    // Build environment with enhanced PATH for Windows
+    // This ensures tools installed via npm, WinGet, etc. are available even when
+    // Electron was launched without inheriting the full user PATH
+    const enhancedPath = getEnhancedPath();
     const env = {
       ...process.env,
       ...options.env,
+      PATH: enhancedPath,
+      Path: enhancedPath, // Windows uses 'Path' sometimes
       TERM: 'xterm-256color',
       COLORTERM: 'truecolor',
     };

@@ -5,3 +5,4 @@ export * from './ipc';
 export * from './workspace';
 export * from './agent';
 export * from './git';
+export * from './startup';

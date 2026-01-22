@@ -17,6 +17,8 @@ export function SettingsDialog({ isOpen, onClose }: SettingsDialogProps) {
   const {
     defaultShell,
     setDefaultShell,
+    agentShell,
+    setAgentShell,
     availableShells,
     loadAvailableShells,
     autoSave,
@@ -136,6 +138,26 @@ export function SettingsDialog({ isOpen, onClose }: SettingsDialogProps) {
                   </select>
                   <p className="settings-description">
                     Default color theme for new terminals
+                  </p>
+                </div>
+
+                <div className="settings-group">
+                  <label className="settings-label">Agent Launch Shell</label>
+                  <select
+                    value={agentShell}
+                    onChange={(e) => setAgentShell(e.target.value as ShellType)}
+                  >
+                    {availableShells
+                      .filter((s) => s.available)
+                      .map((shell) => (
+                        <option key={shell.id} value={shell.id}>
+                          {shell.name}
+                        </option>
+                      ))}
+                  </select>
+                  <p className="settings-description">
+                    Shell used to launch AI agents. PowerShell is recommended on Windows
+                    to support profile-defined commands and aliases. Bash is recommended on Linux/macOS.
                   </p>
                 </div>
               </div>

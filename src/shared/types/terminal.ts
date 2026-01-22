@@ -24,6 +24,8 @@ export interface TerminalCreateOptions {
   env?: Record<string, string>;
   themeId?: string;
   title?: string;
+  /** Shell to use when launching agent commands (Windows: powershell/cmd, Linux/macOS: bash/zsh) */
+  agentShell?: ShellType;
 }
 
 export interface ShellInfo {

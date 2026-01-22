@@ -4,6 +4,7 @@ import { IPC_CHANNELS } from '@shared/constants';
 
 interface SettingsState {
   defaultShell: ShellType;
+  agentShell: ShellType;
   availableShells: ShellInfo[];
   agents: AgentPreset[];
   agentRecentDirectories: AgentRecentDirectories;
@@ -15,6 +16,7 @@ interface SettingsState {
 
 interface SettingsActions {
   setDefaultShell: (shell: ShellType) => void;
+  setAgentShell: (shell: ShellType) => void;
   loadAvailableShells: () => Promise<void>;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
@@ -36,8 +38,16 @@ interface SettingsActions {
 
 type SettingsStore = SettingsState & SettingsActions;
 
+// Detect platform for default agent shell
+const getDefaultAgentShell = (): ShellType => {
+  // In renderer, we can check navigator.platform
+  const isWindows = typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes('win');
+  return isWindows ? 'powershell' : 'bash';
+};
+
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
   defaultShell: 'powershell',
+  agentShell: getDefaultAgentShell(),
   availableShells: [],
   agents: [],
   agentRecentDirectories: {},
@@ -48,6 +58,10 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
 
   setDefaultShell: (shell) => {
     set({ defaultShell: shell });
+  },
+
+  setAgentShell: (shell) => {
+    set({ agentShell: shell });
   },
 
   loadAvailableShells: async () => {

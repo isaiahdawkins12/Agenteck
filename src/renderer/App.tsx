@@ -7,12 +7,14 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { useSettingsStore } from './store/settingsStore';
 import { useLayoutStore } from './store/layoutStore';
 import { useTerminalStore } from './store/terminalStore';
+import { IPC_CHANNELS } from '@shared/constants';
+import type { TerminalSession } from '@shared/types';
 import './styles/app.css';
 
 function App() {
   const { sidebarCollapsed, loadAgents } = useSettingsStore();
-  const { loadWorkspace } = useLayoutStore();
-  const { initializeListeners } = useTerminalStore();
+  const { loadWorkspace, addTile } = useLayoutStore();
+  const { initializeListeners, addExternalTerminal } = useTerminalStore();
 
   useEffect(() => {
     loadWorkspace();
@@ -20,6 +22,23 @@ function App() {
     const cleanup = initializeListeners();
     return cleanup;
   }, [loadWorkspace, loadAgents, initializeListeners]);
+
+  // Listen for terminals created from CLI startup arguments
+  useEffect(() => {
+    const handleTerminalCreated = (session: TerminalSession) => {
+      addExternalTerminal(session);
+      addTile(session.id);
+    };
+
+    const unsubscribe = window.electronAPI.on(
+      IPC_CHANNELS.TERMINAL.CREATED,
+      handleTerminalCreated
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [addExternalTerminal, addTile]);
 
   return (
     <ErrorBoundary>

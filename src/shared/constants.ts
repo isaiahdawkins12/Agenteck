@@ -92,6 +92,15 @@ export const AVAILABLE_AGENTS: AgentPreset[] = [
     website: 'https://github.com/opencode-ai/opencode',
     isBuiltIn: true,
   },
+  {
+    id: 'copilot',
+    name: 'GitHub Copilot',
+    command: 'copilot',
+    args: [],
+    description: "GitHub's AI-powered coding assistant CLI",
+    website: 'https://github.com/features/copilot',
+    isBuiltIn: true,
+  },
 ];
 
 export const DEFAULT_TERMINAL_THEME: ThemeConfig = {
@@ -655,6 +664,7 @@ export const DEFAULT_LAYOUT_PRESETS: LayoutPreset[] = [
 export const IPC_CHANNELS = {
   TERMINAL: {
     CREATE: 'terminal:create',
+    CREATED: 'terminal:created',
     WRITE: 'terminal:write',
     RESIZE: 'terminal:resize',
     KILL: 'terminal:kill',

@@ -15,6 +15,8 @@ interface StoreSchema {
     fontFamily: string;
     autoSave: boolean;
     autoSaveInterval: number;
+    /** Shell used to launch agent commands. Defaults to PowerShell on Windows, bash on Linux/macOS */
+    agentShell: string;
   };
   windowState: {
     width: number;
@@ -32,6 +34,7 @@ const defaultSettings: StoreSchema['settings'] = {
   fontFamily: '"Cascadia Code", "JetBrains Mono", "Fira Code", Consolas, monospace',
   autoSave: true,
   autoSaveInterval: 30000,
+  agentShell: process.platform === 'win32' ? 'powershell' : 'bash',
 };
 
 const defaultWindowState: StoreSchema['windowState'] = {

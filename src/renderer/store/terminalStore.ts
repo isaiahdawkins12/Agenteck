@@ -10,6 +10,7 @@ interface TerminalState {
 
 interface TerminalActions {
   createTerminal: (options?: TerminalCreateOptions) => Promise<TerminalSession>;
+  addExternalTerminal: (session: TerminalSession) => void;
   writeToTerminal: (id: string, data: string) => Promise<void>;
   resizeTerminal: (id: string, size: TerminalSize) => Promise<void>;
   killTerminal: (id: string) => Promise<void>;
@@ -40,6 +41,14 @@ export const useTerminalStore = create<TerminalStore>((set, get) => ({
     }));
 
     return session;
+  },
+
+  addExternalTerminal: (session: TerminalSession) => {
+    set((state) => ({
+      terminals: { ...state.terminals, [session.id]: session },
+      activeTerminalId: state.activeTerminalId || session.id,
+      outputBuffers: { ...state.outputBuffers, [session.id]: [] },
+    }));
   },
 
   writeToTerminal: async (id, data) => {
