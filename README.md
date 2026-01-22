@@ -1,6 +1,6 @@
 # Agenteck
 
-![Agenteck Main Interface](docs/screenshots/main-interface.png)
+![Agenteck](docs/screenshots/agenteck-header.png)
 
 [![license](https://img.shields.io/github/license/isaiahdawkins12/Agenteck.svg?style=flat-square)](LICENSE)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
