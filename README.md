@@ -1,33 +1,52 @@
 # Agenteck
 
-A desktop application for managing multiple CLI AI agents in a unified tiling interface.
-
-<!-- TODO: Screenshot - Main application window showing multiple terminals with different agents -->
 ![Agenteck Main Interface](docs/screenshots/main-interface.png)
 
-## Features
+[![license](https://img.shields.io/github/license/isaiahdawkins12/Agenteck.svg?style=flat-square)](LICENSE)
+[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-**Multi-Agent Support** — Launch Claude Code, GitHub Copilot CLI, Aider, Cline, Continue, or custom agents from a unified sidebar.
+A desktop application for managing multiple CLI AI agents in a unified tiling interface.
 
-**Tiling Layout** — Drag-and-drop terminals into split views. Resize by dragging borders. Use layout presets for quick arrangements.
+Agenteck brings together Claude Code, GitHub Copilot CLI, Aider, and other AI coding assistants into a single window with a flexible tiling layout. Each agent runs in its own terminal with full ANSI color support, clickable URLs, and persistent scrollback. Workspaces auto-save and restore, so you can pick up exactly where you left off.
 
-<!-- TODO: Screenshot - Tiling layout with 3-4 terminals arranged -->
+## Table of Contents
+
+- [Background](#background)
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Background
+
+Modern developers often use multiple AI coding assistants—Claude Code for complex refactoring, Copilot CLI for quick commands, Aider for git-aware edits. Switching between terminal windows and managing layouts manually is tedious.
+
+Agenteck provides:
+
+- **Multi-Agent Support** — Launch Claude Code, GitHub Copilot CLI, Aider, Cline, Continue, or custom agents from a unified sidebar
+- **Tiling Layout** — Drag-and-drop terminals into split views with resizable borders and layout presets
+- **Terminal Emulation** — Powered by xterm.js with full ANSI colors, clickable URLs, Unicode, and scrollback
+- **Workspace Persistence** — Layouts auto-save and restore on startup
+
 ![Tiling Layout](docs/screenshots/tiling-layout.png)
-<!-- 
-**Theming** — Built-in themes (Dracula, Nord, Monokai, Tokyo Night) with per-terminal overrides and a custom theme editor.
 
-<!-- TODO: Screenshot - Theme selector or theme editor panel -->
-![Theme Selection](docs/screenshots/themes.png) -->
+### Tech Stack
 
-**Terminal Emulation** — Powered by xterm.js with full ANSI colors, clickable URLs, Unicode, and scrollback.
+| Layer | Technology |
+|-------|------------|
+| Desktop | Electron 34 |
+| UI | React 18 + TypeScript |
+| State | Zustand |
+| Terminal | xterm.js + node-pty |
+| Layout | react-mosaic-component |
+| Build | Vite |
 
-**Workspace Persistence** — Layouts auto-save and restore on startup.
-
-## Installation
+## Install
 
 ### Prerequisites
 
-- Node.js 18+
+- [Node.js](https://nodejs.org/) 18+
 - npm
 
 ### Quick Start
@@ -51,7 +70,7 @@ npm run dev      # Starts Vite dev server + TypeScript watch
 npm start        # In another terminal, starts Electron
 ```
 
-### Building & Packaging
+### Building
 
 ```bash
 npm run build              # Build for production
@@ -65,7 +84,7 @@ Packaged files output to `release/`.
 
 ## Usage
 
-### CLI Commands
+### CLI
 
 ```bash
 agenteck start       # Start Agenteck (foreground)
@@ -80,7 +99,6 @@ Without global install, use `npm run cli:start`, `npm run cli:stop`, etc.
 
 ### GUI
 
-<!-- TODO: Screenshot - Sidebar showing Agents tab with agent list -->
 ![Agent Sidebar](docs/screenshots/sidebar-agents.png)
 
 **Creating Terminals** — Click **+** in the header or use the sidebar.
@@ -89,12 +107,17 @@ Without global install, use `npm run cli:start`, `npm run cli:stop`, etc.
 
 **Managing Layout** — Drag terminals to split horizontally/vertically. Drag borders to resize. Use the Layouts tab for presets.
 
-<!-- TODO: Screenshot - Settings panel showing theme options -->
-<!-- ![Settings Panel](docs/screenshots/settings.png) -->
+### Configuration
 
-<!-- **Customizing Themes** — Open Settings (gear icon), select a theme, or create a custom one with the theme editor. -->
+Config files are stored at:
 
-## Architecture
+- **Windows**: `%APPDATA%/agenteck-config/config.json`
+- **macOS**: `~/Library/Application Support/agenteck-config/config.json`
+- **Linux**: `~/.config/agenteck-config/config.json`
+
+## API
+
+### Architecture
 
 ```
 src/
@@ -112,27 +135,25 @@ src/
 └── shared/         # Shared types & constants
 ```
 
-## Tech Stack
+### IPC Communication
 
-| Layer | Technology |
-|-------|------------|
-| Desktop | Electron 34 |
-| UI | React 18 + TypeScript |
-| State | Zustand |
-| Terminal | xterm.js + node-pty |
-| Layout | react-mosaic-component |
-| Build | Vite |
+The main and renderer processes communicate via typed IPC channels defined in `src/shared/types/ipc.ts`. The preload script exposes a safe API surface through `window.electronAPI`.
 
-## Configuration
+### State Management
 
-Config location:
-- **Windows**: `%APPDATA%/agenteck-config/config.json`
-- **macOS**: `~/Library/Application Support/agenteck-config/config.json`
-- **Linux**: `~/.config/agenteck-config/config.json`
+Application state is managed with Zustand stores in `src/renderer/store/`:
+
+- `terminalStore.ts` — Terminal instances and output buffers
+- `layoutStore.ts` — Tiling layout configuration
+- `settingsStore.ts` — User preferences and themes
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+PRs accepted.
+
+If editing this README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
 
