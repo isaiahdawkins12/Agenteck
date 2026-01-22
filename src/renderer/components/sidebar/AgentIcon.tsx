@@ -3,6 +3,7 @@ import geminiIcon from '../../assets/agent-icons/gemini.svg';
 import codexIcon from '../../assets/agent-icons/codex.svg';
 import qwenIcon from '../../assets/agent-icons/qwen.svg';
 import opencodeIcon from '../../assets/agent-icons/opencode.svg';
+import copilotIcon from '../../assets/agent-icons/copilot.svg';
 
 const AGENT_ICONS: Record<string, string> = {
   claude: claudeIcon,
@@ -10,6 +11,7 @@ const AGENT_ICONS: Record<string, string> = {
   codex: codexIcon,
   qwen: qwenIcon,
   opencode: opencodeIcon,
+  copilot: copilotIcon,
 };
 
 interface AgentIconProps {

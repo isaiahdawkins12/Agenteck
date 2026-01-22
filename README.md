@@ -7,7 +7,7 @@
 
 A desktop application for managing multiple CLI AI agents in a unified tiling interface.
 
-Agenteck brings together Claude Code, GitHub Copilot CLI, Aider, and other AI coding assistants into a single window with a flexible tiling layout. Each agent runs in its own terminal with full ANSI color support, clickable URLs, and persistent scrollback. Workspaces auto-save and restore, so you can pick up exactly where you left off.
+Agenteck brings together Claude Code, GitHub Copilot, Gemini CLI, OpenCode, Codex, and Qwen into a single window with a flexible tiling layout. Each agent runs in its own terminal with full ANSI color support, clickable URLs, and persistent scrollback. Workspaces auto-save and restore, so you can pick up exactly where you left off.
 
 ## Table of Contents
 
@@ -20,11 +20,11 @@ Agenteck brings together Claude Code, GitHub Copilot CLI, Aider, and other AI co
 
 ## Background
 
-Modern developers often use multiple AI coding assistants—Claude Code for complex refactoring, Copilot CLI for quick commands, Aider for git-aware edits. Switching between terminal windows and managing layouts manually is tedious.
+Modern developers often use multiple AI coding assistants—Claude Code for complex refactoring, GitHub Copilot for quick commands, Gemini for multimodal tasks. Switching between terminal windows and managing layouts manually is tedious.
 
 Agenteck provides:
 
-- **Multi-Agent Support** — Launch Claude Code, GitHub Copilot CLI, Aider, Cline, Continue, or custom agents from a unified sidebar
+- **Multi-Agent Support** — Launch Claude Code, GitHub Copilot, Gemini CLI, OpenCode, Codex, Qwen, or custom agents from a unified sidebar
 - **Tiling Layout** — Drag-and-drop terminals into split views with resizable borders and layout presets
 - **Terminal Emulation** — Powered by xterm.js with full ANSI colors, clickable URLs, Unicode, and scrollback
 - **Workspace Persistence** — Layouts auto-save and restore on startup
