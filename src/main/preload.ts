@@ -42,6 +42,9 @@ const validInvokeChannels: readonly string[] = [
   GitIpcChannels.CREATE_WORKTREE,
   GitIpcChannels.REMOVE_WORKTREE,
   GitIpcChannels.REFRESH,
+  // Clipboard channels
+  IPC_CHANNELS.CLIPBOARD.READ,
+  IPC_CHANNELS.CLIPBOARD.WRITE,
 ];
 
 const validEventChannels: readonly string[] = [

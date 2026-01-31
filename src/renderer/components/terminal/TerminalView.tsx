@@ -1,9 +1,11 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { useTerminalStore } from '../../store/terminalStore';
 import { useThemeStore } from '../../store/themeStore';
+import { useClipboard } from '../../hooks/useClipboard';
+import { TerminalContextMenu } from './TerminalContextMenu';
 import type { ThemeConfig } from '@shared/types';
 import '@xterm/xterm/css/xterm.css';
 import './TerminalView.css';
@@ -47,8 +49,11 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
   const isInitializedRef = useRef<boolean>(false);
   const hasInitialFitRef = useRef<boolean>(false);
 
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+
   const { writeToTerminal, resizeTerminal, outputBuffers } = useTerminalStore();
   const { getTerminalTheme } = useThemeStore();
+  const { readClipboard, writeClipboard } = useClipboard();
   const theme = getTerminalTheme(terminalId);
 
   const handleResize = useCallback(() => {
@@ -95,6 +100,31 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
 
     terminalRef.current = terminal;
     fitAddonRef.current = fitAddon;
+
+    // Custom key handler for clipboard shortcuts
+    terminal.attachCustomKeyEventHandler((event: KeyboardEvent) => {
+      // Ctrl+Shift+C: Copy selected text
+      if (event.ctrlKey && event.shiftKey && event.key === 'C' && event.type === 'keydown') {
+        const selection = terminal.getSelection();
+        if (selection) {
+          writeClipboard(selection);
+        }
+        return false; // Prevent default terminal handling
+      }
+
+      // Ctrl+Shift+V: Paste from clipboard
+      if (event.ctrlKey && event.shiftKey && event.key === 'V' && event.type === 'keydown') {
+        readClipboard().then((text) => {
+          if (text) {
+            writeToTerminal(terminalId, text);
+          }
+        });
+        return false; // Prevent default terminal handling
+      }
+
+      // Allow all other keys through to terminal
+      return true;
+    });
 
     // Use ResizeObserver to detect when container has proper dimensions
     // This fires AFTER the browser has completed layout calculations
@@ -143,6 +173,7 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
       isInitializedRef.current = false;
       hasInitialFitRef.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terminalId]);
 
   // Update theme
@@ -173,7 +204,46 @@ export function TerminalView({ terminalId }: TerminalViewProps) {
     }
   }, [terminalId, outputBuffers]);
 
+  // Context menu handlers
+  const handleContextMenu = useCallback((event: React.MouseEvent) => {
+    event.preventDefault();
+    setContextMenu({ x: event.clientX, y: event.clientY });
+  }, []);
+
+  const handleCopy = useCallback(() => {
+    if (terminalRef.current) {
+      const selection = terminalRef.current.getSelection();
+      if (selection) {
+        writeClipboard(selection);
+      }
+    }
+  }, [writeClipboard]);
+
+  const handlePaste = useCallback(() => {
+    readClipboard().then((text) => {
+      if (text) {
+        writeToTerminal(terminalId, text);
+      }
+    });
+  }, [readClipboard, writeToTerminal, terminalId]);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
   return (
-    <div className="terminal-view" ref={containerRef} />
+    <>
+      <div className="terminal-view" ref={containerRef} onContextMenu={handleContextMenu} />
+      {contextMenu && (
+        <TerminalContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onCopy={handleCopy}
+          onPaste={handlePaste}
+          onClose={handleCloseContextMenu}
+          hasSelection={terminalRef.current?.hasSelection() ?? false}
+        />
+      )}
+    </>
   );
 }

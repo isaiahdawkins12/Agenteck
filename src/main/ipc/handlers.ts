@@ -1,4 +1,4 @@
-import { BrowserWindow, IpcMain, dialog } from 'electron';
+import { BrowserWindow, IpcMain, dialog, clipboard } from 'electron';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
@@ -225,6 +225,15 @@ export function registerIpcHandlers(
     }
 
     return { success: true, themes, errors };
+  });
+
+  // Clipboard handlers
+  ipcMain.handle(IPC_CHANNELS.CLIPBOARD.READ, async () => {
+    return clipboard.readText();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.CLIPBOARD.WRITE, async (_event, text: string) => {
+    clipboard.writeText(text);
   });
 }
 

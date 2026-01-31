@@ -46,6 +46,10 @@ export interface IpcChannels {
   // Theme channels
   'theme:export': (theme: ThemeConfig) => Promise<{ success: boolean; filePath?: string; error?: string; canceled?: boolean }>;
   'theme:import': () => Promise<{ success: boolean; themes?: ThemeConfig[]; errors?: string[]; canceled?: boolean }>;
+
+  // Clipboard channels
+  'clipboard:read': () => Promise<string>;
+  'clipboard:write': (text: string) => Promise<void>;
 }
 
 export interface IpcEvents {

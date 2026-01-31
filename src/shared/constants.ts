@@ -704,4 +704,8 @@ export const IPC_CHANNELS = {
     EXPORT: 'theme:export',
     IMPORT: 'theme:import',
   },
+  CLIPBOARD: {
+    READ: 'clipboard:read',
+    WRITE: 'clipboard:write',
+  },
 } as const;
